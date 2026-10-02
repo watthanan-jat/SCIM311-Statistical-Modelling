@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Course information for SCIM311 Statistical Modelling: generalized linear models, time-series analysis, learning outcomes, assessment, and schedule.">
+  <title>SCIM311 Statistical Modelling</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #122019;
+      --muted: #58635d;
+      --cream: #fbfcf9;
+      --white: #fff;
+      --green: #2f6f54;
+      --green-deep: #184735;
+      --green-bright: #6eb88a;
+      --soft: #eef7f1;
+      --soft-strong: #d8ebde;
+      --line: #dce7df;
+      --shadow: 0 18px 48px rgba(25, 68, 51, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--green-deep);
+      text-decoration-color: var(--green-bright);
+      text-underline-offset: 0.18em;
+    }
+
+    a:hover { color: var(--green); }
+
+    .wrap {
+      margin: 0 auto;
+      max-width: 1120px;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    .site-header {
+      background:
+        radial-gradient(circle at 82% 8%, rgba(110, 184, 138, 0.23), transparent 26rem),
+        linear-gradient(145deg, #f7fbf8 0%, #edf7f0 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    nav {
+      align-items: center;
+      display: flex;
+      gap: 24px;
+      justify-content: space-between;
+      padding: 18px 0;
+    }
+
+    .brand {
+      color: var(--green-deep);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+
+    .hero {
+      display: grid;
+      gap: 48px;
+      grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+      padding: 72px 0 76px;
+    }
+
+    .eyebrow,
+    .kicker {
+      color: var(--green);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      margin: 0 0 12px;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.12;
+      margin-top: 0;
+    }
+
+    h1 {
+      color: var(--green-deep);
+      font-size: clamp(3rem, 8vw, 6.3rem);
+      letter-spacing: -0.055em;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      color: var(--green-deep);
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+    }
+
+    p { color: var(--muted); }
+
+    .lead {
+      font-size: clamp(1.08rem, 2vw, 1.25rem);
+      margin: 0;
+      max-width: 760px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button {
+      border: 1px solid var(--green);
+      border-radius: 999px;
+      display: inline-block;
+      font-size: 0.92rem;
+      font-weight: 700;
+      padding: 10px 17px;
+      text-decoration: none;
+    }
+
+    .button.primary {
+      background: var(--green-deep);
+      color: var(--white);
+    }
+
+    .button.secondary {
+      background: rgba(255,255,255,0.65);
+      color: var(--green-deep);
+    }
+
+    .course-facts {
+      align-self: end;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid var(--soft-strong);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      margin: 0;
+      padding: 12px 24px;
+    }
+
+    .course-facts div {
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 92px 1fr;
+      padding: 14px 0;
+    }
+
+    .course-facts div:last-child { border-bottom: 0; }
+
+    .course-facts dt {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .course-facts dd {
+      color: var(--ink);
+      margin: 0;
+    }
+
+    main { padding-bottom: 72px; }
+    section { scroll-margin-top: 24px; }
+
+    .scope {
+      background: var(--green-deep);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      color: var(--white);
+      display: grid;
+      gap: 28px;
+      grid-template-columns: 180px 1fr;
+      margin-top: -28px;
+      padding: 34px 38px;
+    }
+
+    .scope .kicker {
+      color: #aee2bf;
+      margin: 4px 0 0;
+    }
+
+    .scope h2, .scope p { color: var(--white); }
+
+    .scope h2 {
+      font-size: clamp(1.55rem, 3vw, 2.15rem);
+      margin-bottom: 12px;
+    }
+
+    .scope p {
+      margin: 0;
+      opacity: 0.88;
+    }
+
+    .section-grid {
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 52px;
+      grid-template-columns: minmax(170px, 240px) 1fr;
+      padding: 72px 0;
+    }
+
+    .section-grid:last-child { border-bottom: 0; }
+    .section-title p { margin: 0; }
+    .section-grid > *,
+    .scope > *,
+    .content { min-width: 0; }
+    .content > :first-child { margin-top: 0; }
+    .content > :last-child { margin-bottom: 0; }
+
+    .content .intro {
+      color: var(--ink);
+      font-size: 1.08rem;
+    }
+
+    .cards {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 24px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .card .number {
+      color: var(--green);
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    .card p { margin-bottom: 0; }
+
+    .assessment-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin: 24px 0;
+    }
+
+    .assessment {
+      background: var(--soft);
+      border-left: 4px solid var(--green);
+      border-radius: 4px 16px 16px 4px;
+      padding: 20px;
+    }
+
+    .assessment strong {
+      color: var(--green-deep);
+      display: block;
+      font-size: 2.2rem;
+      line-height: 1;
+      margin-bottom: 9px;
+    }
+
+    .assessment span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .note {
+      background: #fffdf4;
+      border: 1px solid #e9dfb8;
+      border-radius: 16px;
+      color: #5c5539;
+      padding: 18px 20px;
+    }
+
+    .table-shell {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      min-width: 680px;
+      width: 100%;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 16px 18px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--soft);
+      color: var(--green-deep);
+      font-size: 0.78rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    td:first-child {
+      color: var(--green-deep);
+      font-weight: 800;
+      white-space: nowrap;
+      width: 100px;
+    }
+
+    .materials {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .material {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      color: var(--ink);
+      display: block;
+      padding: 22px;
+      text-decoration: none;
+    }
+
+    .material:hover {
+      border-color: var(--green-bright);
+      box-shadow: var(--shadow);
+    }
+
+    .material span {
+      color: var(--green);
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .material p { margin: 7px 0 0; }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 0 40px;
+    }
+
+    footer .wrap {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      justify-content: space-between;
+    }
+
+    footer p {
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    @media (max-width: 800px) {
+      .hero, .section-grid, .scope { grid-template-columns: 1fr; }
+      .hero { padding: 52px 0 58px; }
+      .scope { gap: 10px; padding: 28px; }
+      .section-grid { gap: 24px; padding: 56px 0; }
+      .assessment-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .wrap { padding-left: 18px; padding-right: 18px; }
+      nav { align-items: flex-start; flex-direction: column; gap: 12px; }
+      .nav-links { justify-content: flex-start; }
+      .cards, .materials { grid-template-columns: 1fr; }
+      h1 { font-size: clamp(2.8rem, 17vw, 4.2rem); }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="wrap">
+      <nav aria-label="Main navigation">
+        <a class="brand" href="#top">SCIM311</a>
+        <div class="nav-links">
+          <a href="#overview">Overview</a>
+          <a href="#outcomes">Outcomes</a>
+          <a href="#assessment">Assessment</a>
+          <a href="#schedule">Schedule</a>
+          <a href="#materials">Materials</a>
+          <a href="#details">Course details</a>
+        </div>
+      </nav>
+
+      <div class="hero">
+        <div>
+          <p class="eyebrow">Industrial Mathematics and Data Science</p>
+          <h1>Statistical Modelling</h1>
+          <p class="lead">
+            Generalized linear models and their applications, followed by time-series
+            analysis, model identification, diagnostics, and forecasting.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#overview">Course overview</a>
+            <a class="button secondary" href="#schedule">Full schedule</a>
+          </div>
+        </div>
+
+        <dl class="course-facts" aria-label="Course facts">
+          <div><dt>Course</dt><dd>SCIM 311</dd></div>
+          <div><dt>Credits</dt><dd>3 (3-0-6)</dd></div>
+          <div><dt>Semester</dt><dd>First semester, 2026</dd></div>
+          <div><dt>Level</dt><dd>Year 3 · Elective</dd></div>
+          <div><dt>Software</dt><dd>R</dd></div>
+        </dl>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <aside class="scope" aria-labelledby="scope-title">
+      <p class="kicker">Materials release</p>
+      <div>
+        <h2 id="scope-title">Chapter 1 time-series materials are now available.</h2>
+        <p>
+          Begin with Introduction to Time Series: learn how time ordering changes
+          statistical analysis, recognize common time-series components, and work
+          with basic time-series objects in R.
+          <a href="chapter01.html" style="color: #fff; font-weight: 800;">Read Chapter 1 →</a>
+        </p>
+      </div>
+    </aside>
+
+    <section class="section-grid" id="overview" aria-labelledby="overview-title">
+      <div class="section-title">
+        <p class="kicker">What the course covers</p>
+        <h2 id="overview-title">Course overview</h2>
+      </div>
+      <div class="content">
+        <p class="intro">
+          SCIM311 develops students' ability to explain and apply statistical
+          modelling concepts, especially generalized linear models and time-series
+          models, and to use those models appropriately in data analysis.
+        </p>
+        <p>
+          The first half of the semester introduces generalized linear models,
+          response distributions, fitting, interpretation, and applications. After
+          the midterm, the course turns to the structure of time-dependent data and
+          the models used to analyse and forecast it.
+        </p>
+        <div class="cards">
+          <article class="card">
+            <span class="number">Before midterm · Weeks 1–8</span>
+            <h3>Generalized Linear Models</h3>
+            <p>Concepts, response distributions, model fitting, interpretation, and applications.</p>
+          </article>
+          <article class="card">
+            <span class="number">After midterm · Weeks 10–16</span>
+            <h3>Time-Series Models</h3>
+            <p>Stationarity, ACF/PACF, MA, AR, ARMA, ARIMA, SARIMA, and forecasting.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-grid" id="outcomes" aria-labelledby="outcomes-title">
+      <div class="section-title">
+        <p class="kicker">What students will achieve</p>
+        <h2 id="outcomes-title">Course learning outcomes</h2>
+        <p>All four outcomes cover the complete course.</p>
+      </div>
+      <div class="content">
+        <div class="cards">
+          <article class="card">
+            <span class="number">CLO1</span>
+            <h3>Explain GLM concepts</h3>
+            <p>Describe generalized linear model concepts and select models for different response types.</p>
+          </article>
+          <article class="card">
+            <span class="number">CLO2</span>
+            <h3>Apply generalized linear models</h3>
+            <p>Apply GLMs to data analysis and interpret fitted models in statistical and practical terms.</p>
+          </article>
+          <article class="card">
+            <span class="number">CLO3</span>
+            <h3>Analyse stationary time series</h3>
+            <p>Explain time-series concepts and analyse stationarity, autocorrelation, ACF/PACF, and MA, AR, and ARMA models.</p>
+          </article>
+          <article class="card">
+            <span class="number">CLO4</span>
+            <h3>Diagnose and forecast</h3>
+            <p>Forecast time-series outcomes using ARIMA/SARIMA models and the Box–Jenkins model-building and diagnostic workflow.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-grid" id="assessment" aria-labelledby="assessment-title">
+      <div class="section-title">
+        <p class="kicker">Evidence of learning</p>
+        <h2 id="assessment-title">Assessment</h2>
+        <p>Weights shown below are from the official 2026 course specification.</p>
+      </div>
+      <div class="content">
+        <div class="assessment-grid">
+          <div class="assessment">
+            <strong>25%</strong>
+            <span>Individual work, including assignments and in-class activities</span>
+          </div>
+          <div class="assessment">
+            <strong>60%</strong>
+            <span>Written examinations across the course learning outcomes</span>
+          </div>
+          <div class="assessment">
+            <strong>15%</strong>
+            <span>Project work connected to the generalized linear model outcomes</span>
+          </div>
+        </div>
+        <div class="table-shell">
+          <table aria-label="Assessment weight by course learning outcome">
+            <thead>
+              <tr>
+                <th scope="col">Outcome</th>
+                <th scope="col">Individual work</th>
+                <th scope="col">Examination</th>
+                <th scope="col">Project</th>
+                <th scope="col">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>CLO1</td><td>5%</td><td>10%</td><td>5%</td><td>20%</td></tr>
+              <tr><td>CLO2</td><td>5%</td><td>20%</td><td>10%</td><td>35%</td></tr>
+              <tr><td>CLO3</td><td>7.5%</td><td>10%</td><td>—</td><td>17.5%</td></tr>
+              <tr><td>CLO4</td><td>7.5%</td><td>20%</td><td>—</td><td>27.5%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-grid" id="schedule" aria-labelledby="schedule-title">
+      <div class="section-title">
+        <p class="kicker">Weekly roadmap</p>
+        <h2 id="schedule-title">Full course schedule</h2>
+        <p>The official plan covers both halves of the semester.</p>
+      </div>
+      <div class="content">
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Week</th>
+                <th scope="col">Topic</th>
+                <th scope="col">Learning focus</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>1–8</td><td>Generalized Linear Models</td><td>Concepts, response distributions, fitting, interpretation, and applications. Lecturer: Pannapa Changpetch.</td></tr>
+              <tr><td>9</td><td>Midterm examination</td><td>Assessment of the pre-midterm generalized linear model component.</td></tr>
+              <tr><td>10</td><td>Introduction to time series</td><td>Time-indexed data, components, plots, and the role of R.</td></tr>
+              <tr><td>11</td><td>Fundamental concepts</td><td>Stationarity, autocovariance, autocorrelation, and ACF/PACF.</td></tr>
+              <tr><td>12</td><td>MA and AR models</td><td>Model structure, properties, identification, and interpretation.</td></tr>
+              <tr><td>13</td><td>ARMA models</td><td>Combining autoregressive and moving-average dynamics.</td></tr>
+              <tr><td>14</td><td>Nonstationary processes and ARIMA</td><td>Differencing, integration, model formulation, and diagnostics.</td></tr>
+              <tr><td>15</td><td>Box–Jenkins method</td><td>Identification, estimation, diagnostic checking, and forecasting.</td></tr>
+              <tr><td>16</td><td>SARIMA models</td><td>Seasonal dependence, seasonal differencing, and seasonal forecasts.</td></tr>
+              <tr><td>17</td><td>Final examination</td><td>Assessment of the course learning outcomes.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-grid" id="materials" aria-labelledby="materials-title">
+      <div class="section-title">
+        <p class="kicker">Read online</p>
+        <h2 id="materials-title">Course materials</h2>
+        <p>Lecture PDFs are distributed separately through Google Classroom.</p>
+      </div>
+      <div class="materials">
+        <a class="material" href="chapter01.html">
+          <span>Week 10 · Chapter 1</span>
+          <h3>Introduction to Time Series</h3>
+          <p>Time-indexed data, forecasting objectives, components, simple models, visualisation, and basic R time-series objects.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="section-grid" id="details" aria-labelledby="details-title">
+      <div class="section-title">
+        <p class="kicker">Official information</p>
+        <h2 id="details-title">Course details</h2>
+        <p>Official course information for the 2026 offering.</p>
+      </div>
+      <div class="materials">
+        <article class="material">
+          <span>Course coordinator</span>
+          <h3>Assoc. Prof. Pannapa Changpetch, PhD</h3>
+          <p>Responsible instructor and lecturer for the pre-midterm GLM component.</p>
+        </article>
+        <article class="material">
+          <span>Time-series instructor</span>
+          <h3>Asst. Prof. Dr. Watthanan Jatuviriyapornchai</h3>
+          <p>Lecturer for the post-midterm time-series component.</p>
+        </article>
+        <article class="material">
+          <span>Requirements</span>
+          <h3>No prerequisites or co-requisites</h3>
+          <p>The course is a Year 3 elective in Industrial Mathematics and Data Science.</p>
+        </article>
+        <article class="material">
+          <span>Learning format</span>
+          <h3>3 hours of theory each week</h3>
+          <p>Supported by 6 hours of self-study per week and R-based demonstrations.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>SCIM311 Statistical Modelling · First semester 2026</p>
+      <p>GLM: Pannapa Changpetch · Time series: Watthanan Jatuviriyapornchai</p>
+      <p>Updated <time datetime="2026-08-27">27 August 2026</time></p>
+    </div>
+  </footer>
+</body>
+</html>
