@@ -91,6 +91,26 @@
       padding: 72px 0 76px;
     }
 
+    .hero-side {
+      align-self: center;
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-illustration {
+      background: linear-gradient(155deg, #fffefa, #e4f3e8);
+      border: 1px solid var(--soft-strong);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+
+    .hero-illustration svg {
+      display: block;
+      height: auto;
+      width: 100%;
+    }
+
     .eyebrow,
     .kicker {
       color: var(--green);
@@ -120,6 +140,22 @@
       line-height: 1.2;
       margin: 0 0 24px;
     }
+
+    .hero-instructor {
+      font-size: 0.95rem;
+      margin: 18px 0 0;
+    }
+
+    .hero-instructor span {
+      color: var(--green);
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .hero-instructor a { font-weight: 700; }
 
     h2 {
       color: var(--green-deep);
@@ -169,7 +205,6 @@
     }
 
     .course-facts {
-      align-self: end;
       background: rgba(255,255,255,0.8);
       border: 1px solid var(--soft-strong);
       border-radius: 22px;
@@ -315,7 +350,7 @@
 
     table {
       border-collapse: collapse;
-      min-width: 860px;
+      min-width: 720px;
       width: 100%;
     }
 
@@ -343,7 +378,13 @@
       width: 100px;
     }
 
-    td:nth-child(2), td:nth-child(3) { white-space: nowrap; }
+    td:nth-child(2) { white-space: nowrap; }
+
+    .schedule-meta {
+      color: var(--green-deep);
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
 
     .materials {
       display: grid;
@@ -451,19 +492,55 @@
             Understand time-dependent data, build and check time-series models,
             and use them to make forecasts.
           </p>
+          <p class="hero-instructor"><span>Instructor</span><a href="https://watthanan-jat.github.io">Asst. Prof. Dr. Watthanan Jatuviriyapornchai</a></p>
           <div class="hero-actions">
             <a class="button primary" href="#overview">Overview</a>
             <a class="button secondary" href="#assessment">Assessment: 45%</a>
           </div>
         </div>
 
-        <dl class="course-facts" aria-label="Course facts">
-          <div><dt>Course</dt><dd>SCIM 311</dd></div>
-          <div><dt>Class</dt><dd>Thursday · 13:00–16:00</dd></div>
-          <div><dt>Weeks</dt><dd>10–17</dd></div>
-          <div><dt>Weight</dt><dd>45% of the course grade</dd></div>
-          <div><dt>Software</dt><dd>R</dd></div>
-        </dl>
+        <div class="hero-side">
+          <div class="hero-illustration">
+            <svg viewBox="0 0 360 205" role="img" aria-labelledby="flower-title flower-desc" xmlns="http://www.w3.org/2000/svg">
+              <title id="flower-title">A flower growing over time</title>
+              <desc id="flower-desc">A rising time-series line passes a seed, a sprout, a bud, and a blooming flower.</desc>
+              <path d="M30 44H338M30 86H338M30 128H338" stroke="#d9e9dd" stroke-width="1.5" stroke-dasharray="4 6"/>
+              <path d="M30 172H338M30 172V22" fill="none" stroke="#87a895" stroke-width="2" stroke-linecap="round"/>
+              <path d="M45 160C75 156 91 145 120 138S171 119 204 103S266 76 294 54" fill="none" stroke="#4f9b73" stroke-width="4" stroke-linecap="round"/>
+              <ellipse cx="45" cy="164" rx="9" ry="6" fill="#d69a60" stroke="#9a6947" stroke-width="2"/>
+              <path d="M120 171V140" fill="none" stroke="#427d54" stroke-width="4" stroke-linecap="round"/>
+              <ellipse cx="111" cy="155" rx="13" ry="6" transform="rotate(28 111 155)" fill="#78bd76" stroke="#427d54" stroke-width="1.5"/>
+              <ellipse cx="129" cy="150" rx="13" ry="6" transform="rotate(-28 129 150)" fill="#9ad384" stroke="#427d54" stroke-width="1.5"/>
+              <path d="M204 171V107" fill="none" stroke="#427d54" stroke-width="4" stroke-linecap="round"/>
+              <ellipse cx="191" cy="146" rx="15" ry="7" transform="rotate(28 191 146)" fill="#78bd76" stroke="#427d54" stroke-width="1.5"/>
+              <ellipse cx="216" cy="128" rx="15" ry="7" transform="rotate(-28 216 128)" fill="#9ad384" stroke="#427d54" stroke-width="1.5"/>
+              <path d="M195 104Q204 88 213 104Q204 116 195 104Z" fill="#eaa1aa" stroke="#a95670" stroke-width="2"/>
+              <path d="M294 171V67" fill="none" stroke="#427d54" stroke-width="5" stroke-linecap="round"/>
+              <ellipse cx="279" cy="143" rx="17" ry="8" transform="rotate(28 279 143)" fill="#78bd76" stroke="#427d54" stroke-width="1.5"/>
+              <ellipse cx="308" cy="122" rx="17" ry="8" transform="rotate(-28 308 122)" fill="#9ad384" stroke="#427d54" stroke-width="1.5"/>
+              <ellipse cx="280" cy="95" rx="14" ry="7" transform="rotate(30 280 95)" fill="#78bd76" stroke="#427d54" stroke-width="1.5"/>
+              <g fill="#f5aab4" stroke="#b95f7a" stroke-width="2">
+                <ellipse cx="294" cy="36" rx="10" ry="17"/>
+                <ellipse cx="311" cy="47" rx="10" ry="17" transform="rotate(72 311 47)"/>
+                <ellipse cx="305" cy="66" rx="10" ry="17" transform="rotate(144 305 66)"/>
+                <ellipse cx="283" cy="66" rx="10" ry="17" transform="rotate(216 283 66)"/>
+                <ellipse cx="277" cy="47" rx="10" ry="17" transform="rotate(288 277 47)"/>
+              </g>
+              <circle cx="294" cy="54" r="10" fill="#f8d871" stroke="#c8983f" stroke-width="2"/>
+              <circle cx="120" cy="138" r="4" fill="#fff" stroke="#4f9b73" stroke-width="2"/>
+              <circle cx="204" cy="103" r="4" fill="#fff" stroke="#4f9b73" stroke-width="2"/>
+              <text x="34" y="17" fill="#518466" font-family="sans-serif" font-size="11" font-weight="700">growth</text>
+              <text x="284" y="194" fill="#518466" font-family="sans-serif" font-size="11" font-weight="700">time →</text>
+            </svg>
+          </div>
+          <dl class="course-facts" aria-label="Course facts">
+            <div><dt>Course</dt><dd>SCIM 311</dd></div>
+            <div><dt>Room</dt><dd>M305</dd></div>
+            <div><dt>Weeks</dt><dd>10–17</dd></div>
+            <div><dt>Weight</dt><dd>45% of the course grade</dd></div>
+            <div><dt>Software</dt><dd>R</dd></div>
+          </dl>
+        </div>
       </div>
     </div>
   </header>
@@ -556,9 +633,10 @@
 
     <section class="section-grid" id="schedule" aria-labelledby="schedule-title">
       <div class="section-title">
-        <p class="kicker">Thursdays · 13:00–16:00</p>
+        <p class="kicker">Weekly roadmap</p>
         <h2 id="schedule-title">Course Schedule</h2>
-        <p>Classes begin on 8 October 2026. The final exam date and time will be announced.</p>
+        <p class="schedule-meta">Thursdays · 13:00–16:00<br>Room: M305</p>
+        <p>The final exam date and time will be announced.</p>
       </div>
       <div class="content">
         <div class="table-shell">
@@ -567,20 +645,19 @@
               <tr>
                 <th scope="col">Week</th>
                 <th scope="col">Date</th>
-                <th scope="col">Time</th>
                 <th scope="col">Topics</th>
                 <th scope="col">Assessment</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td>10</td><td><time datetime="2026-10-08">8 Oct 2026</time></td><td>13:00–16:00</td><td>Introduction to time series; time plots, components, simple models, and moments in time.</td><td>—</td></tr>
-              <tr><td>11</td><td><time datetime="2026-10-15">15 Oct 2026</time></td><td>13:00–16:00</td><td>Stationarity, autocovariance, sample ACF and its significance; the backshift operator.</td><td>—</td></tr>
-              <tr><td>12</td><td><time datetime="2026-10-22">22 Oct 2026</time></td><td>13:00–16:00</td><td>Moving-average and autoregressive models; stationarity, ACF, PACF, and model identification.</td><td>Assignment 1 released</td></tr>
-              <tr><td>13</td><td><time datetime="2026-10-29">29 Oct 2026</time></td><td>13:00–16:00</td><td>Fitting and forecasting MA and AR models; diagnostics, ARMA models, and their properties.</td><td>—</td></tr>
-              <tr><td>14</td><td><time datetime="2026-11-05">5 Nov 2026</time></td><td>13:00–16:00</td><td>Nonstationary series, differencing, ARIMA models, and model identification.</td><td>Paper-based quiz</td></tr>
-              <tr><td>15</td><td><time datetime="2026-11-12">12 Nov 2026</time></td><td>13:00–16:00</td><td>Box–Jenkins modelling: identification, estimation, diagnostics, and model refinement.</td><td>Assignment 2 released</td></tr>
-              <tr><td>16</td><td><time datetime="2026-11-19">19 Nov 2026</time></td><td>13:00–16:00</td><td>Forecasting with ARIMA; seasonal time series, SARIMA models, and seasonal forecasting.</td><td>—</td></tr>
-              <tr><td>17</td><td>To be announced</td><td>To be announced</td><td>Final examination on time-series topics.</td><td>Final exam</td></tr>
+              <tr><td>10</td><td><time datetime="2026-10-08">8 Oct 2026</time></td><td>Introduction to time series; time plots, components, simple models, and moments in time.</td><td>—</td></tr>
+              <tr><td>11</td><td><time datetime="2026-10-15">15 Oct 2026</time></td><td>Stationarity, autocovariance, sample ACF and its significance; the backshift operator.</td><td>—</td></tr>
+              <tr><td>12</td><td><time datetime="2026-10-22">22 Oct 2026</time></td><td>Moving-average and autoregressive models; stationarity, ACF, PACF, and model identification.</td><td>Assignment 1 released</td></tr>
+              <tr><td>13</td><td><time datetime="2026-10-29">29 Oct 2026</time></td><td>Fitting and forecasting MA and AR models; diagnostics, ARMA models, and their properties.</td><td>—</td></tr>
+              <tr><td>14</td><td><time datetime="2026-11-05">5 Nov 2026</time></td><td>Nonstationary series, differencing, ARIMA models, and model identification.</td><td>Paper-based quiz</td></tr>
+              <tr><td>15</td><td><time datetime="2026-11-12">12 Nov 2026</time></td><td>Box–Jenkins modelling: identification, estimation, diagnostics, and model refinement.</td><td>Assignment 2 released</td></tr>
+              <tr><td>16</td><td><time datetime="2026-11-19">19 Nov 2026</time></td><td>Forecasting with ARIMA; seasonal time series, SARIMA models, and seasonal forecasting.</td><td>—</td></tr>
+              <tr><td>17</td><td>To be announced</td><td>Final examination on time-series topics.</td><td>Final exam</td></tr>
             </tbody>
           </table>
         </div>
