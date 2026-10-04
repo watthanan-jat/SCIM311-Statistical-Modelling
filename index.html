@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="SCIM311 Statistical Modelling Part II: time-series topics, CLOs, assessment, and weekly schedule.">
-  <title>SCIM311 Statistical Modelling · Part II: Time Series</title>
+  <meta name="description" content="SCIM311 Statistical Modelling: time-series topics, CLOs, assessment, and course schedule.">
+  <title>SCIM311 Statistical Modelling · Time Series</title>
   <style>
     :root {
       color-scheme: light;
@@ -315,7 +315,7 @@
 
     table {
       border-collapse: collapse;
-      min-width: 680px;
+      min-width: 860px;
       width: 100%;
     }
 
@@ -343,6 +343,8 @@
       width: 100px;
     }
 
+    td:nth-child(2), td:nth-child(3) { white-space: nowrap; }
+
     .materials {
       display: grid;
       gap: 14px;
@@ -359,16 +361,6 @@
       text-decoration: none;
     }
 
-    a.material:hover {
-      border-color: var(--green-bright);
-      box-shadow: var(--shadow);
-    }
-
-    .material.pending {
-      background: var(--soft);
-      border-style: dashed;
-    }
-
     .material span {
       color: var(--green);
       display: block;
@@ -380,6 +372,25 @@
     }
 
     .material p { margin: 7px 0 0; }
+
+    .chapter-list {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      list-style: none;
+      margin: 22px 0 0;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .chapter-list li {
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      padding: 12px 18px;
+    }
+
+    .chapter-list li:last-child { border-bottom: 0; }
+    .chapter-list a { font-weight: 700; }
 
     footer {
       border-top: 1px solid var(--line);
@@ -425,7 +436,7 @@
           <a href="#overview">Overview</a>
           <a href="#outcomes">CLOs</a>
           <a href="#assessment">Assessment</a>
-          <a href="#schedule">Week plan</a>
+          <a href="#schedule">Course Schedule</a>
           <a href="#materials">Materials</a>
           <a href="#details">Course details</a>
         </div>
@@ -441,14 +452,14 @@
             and use them to make forecasts.
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#overview">Part II overview</a>
+            <a class="button primary" href="#overview">Overview</a>
             <a class="button secondary" href="#assessment">Assessment: 45%</a>
           </div>
         </div>
 
         <dl class="course-facts" aria-label="Course facts">
           <div><dt>Course</dt><dd>SCIM 311</dd></div>
-          <div><dt>Part</dt><dd>II · Time Series</dd></div>
+          <div><dt>Class</dt><dd>Thursday · 13:00–16:00</dd></div>
           <div><dt>Weeks</dt><dd>10–17</dd></div>
           <div><dt>Weight</dt><dd>45% of the course grade</dd></div>
           <div><dt>Software</dt><dd>R</dd></div>
@@ -461,11 +472,11 @@
     <section class="section-grid" id="overview" aria-labelledby="overview-title">
       <div class="section-title">
         <p class="kicker">Weeks 10–17</p>
-        <h2 id="overview-title">Part II overview</h2>
+        <h2 id="overview-title">Overview</h2>
       </div>
       <div class="content">
         <p class="intro">
-          Part II of SCIM311 focuses on time-series analysis: how observations
+          This course component focuses on time-series analysis: how observations
           depend on time, how to describe that dependence, and how to forecast
           future values.
         </p>
@@ -492,8 +503,8 @@
     <section class="section-grid" id="outcomes" aria-labelledby="outcomes-title">
       <div class="section-title">
         <p class="kicker">What students will achieve</p>
-        <h2 id="outcomes-title">Part II CLOs</h2>
-        <p>These are the two CLOs assessed in Part II.</p>
+        <h2 id="outcomes-title">CLOs</h2>
+        <p>These are the two CLOs assessed in the time-series component.</p>
       </div>
       <div class="content">
         <div class="cards">
@@ -514,7 +525,7 @@
     <section class="section-grid" id="assessment" aria-labelledby="assessment-title">
       <div class="section-title">
         <p class="kicker">45% of the course grade</p>
-        <h2 id="assessment-title">Part II assessment</h2>
+        <h2 id="assessment-title">Assessment</h2>
         <p>The four components below add up to 45% of the overall course grade.</p>
       </div>
       <div class="content">
@@ -522,7 +533,7 @@
           <div class="assessment">
             <strong>30%</strong>
             <h3>Final exam</h3>
-            <p>A written exam covering the Part II time-series material.</p>
+            <p>A written exam covering the time-series material.</p>
           </div>
           <div class="assessment">
             <strong>5%</strong>
@@ -545,9 +556,9 @@
 
     <section class="section-grid" id="schedule" aria-labelledby="schedule-title">
       <div class="section-title">
-        <p class="kicker">Weekly roadmap</p>
-        <h2 id="schedule-title">Part II week plan</h2>
-        <p>Weeks 10–16 follow the lecture-script plan; Week 17 is the written final examination.</p>
+        <p class="kicker">Thursdays · 13:00–16:00</p>
+        <h2 id="schedule-title">Course Schedule</h2>
+        <p>Classes begin on 8 October 2026. The final exam date and time will be announced.</p>
       </div>
       <div class="content">
         <div class="table-shell">
@@ -555,19 +566,21 @@
             <thead>
               <tr>
                 <th scope="col">Week</th>
+                <th scope="col">Date</th>
+                <th scope="col">Time</th>
                 <th scope="col">Topics</th>
                 <th scope="col">Assessment</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td>10</td><td>Introduction to time series; time plots, components, simple models, and moments in time.</td><td>—</td></tr>
-              <tr><td>11</td><td>Stationarity, autocovariance, sample ACF and its significance; the backshift operator.</td><td>—</td></tr>
-              <tr><td>12</td><td>Moving-average and autoregressive models; stationarity, ACF, PACF, and model identification.</td><td>Assignment 1 released</td></tr>
-              <tr><td>13</td><td>Fitting and forecasting MA and AR models; diagnostics, ARMA models, and their properties.</td><td>—</td></tr>
-              <tr><td>14</td><td>Nonstationary series, differencing, ARIMA models, and model identification.</td><td>Paper-based quiz</td></tr>
-              <tr><td>15</td><td>Box–Jenkins modelling: identification, estimation, diagnostics, and model refinement.</td><td>Assignment 2 released</td></tr>
-              <tr><td>16</td><td>Forecasting with ARIMA; seasonal time series, SARIMA models, and seasonal forecasting.</td><td>—</td></tr>
-              <tr><td>17</td><td>Final examination on Part II time-series topics.</td><td>Final exam</td></tr>
+              <tr><td>10</td><td><time datetime="2026-10-08">8 Oct 2026</time></td><td>13:00–16:00</td><td>Introduction to time series; time plots, components, simple models, and moments in time.</td><td>—</td></tr>
+              <tr><td>11</td><td><time datetime="2026-10-15">15 Oct 2026</time></td><td>13:00–16:00</td><td>Stationarity, autocovariance, sample ACF and its significance; the backshift operator.</td><td>—</td></tr>
+              <tr><td>12</td><td><time datetime="2026-10-22">22 Oct 2026</time></td><td>13:00–16:00</td><td>Moving-average and autoregressive models; stationarity, ACF, PACF, and model identification.</td><td>Assignment 1 released</td></tr>
+              <tr><td>13</td><td><time datetime="2026-10-29">29 Oct 2026</time></td><td>13:00–16:00</td><td>Fitting and forecasting MA and AR models; diagnostics, ARMA models, and their properties.</td><td>—</td></tr>
+              <tr><td>14</td><td><time datetime="2026-11-05">5 Nov 2026</time></td><td>13:00–16:00</td><td>Nonstationary series, differencing, ARIMA models, and model identification.</td><td>Paper-based quiz</td></tr>
+              <tr><td>15</td><td><time datetime="2026-11-12">12 Nov 2026</time></td><td>13:00–16:00</td><td>Box–Jenkins modelling: identification, estimation, diagnostics, and model refinement.</td><td>Assignment 2 released</td></tr>
+              <tr><td>16</td><td><time datetime="2026-11-19">19 Nov 2026</time></td><td>13:00–16:00</td><td>Forecasting with ARIMA; seasonal time series, SARIMA models, and seasonal forecasting.</td><td>—</td></tr>
+              <tr><td>17</td><td>To be announced</td><td>To be announced</td><td>Final examination on time-series topics.</td><td>Final exam</td></tr>
             </tbody>
           </table>
         </div>
@@ -580,54 +593,18 @@
         <h2 id="materials-title">Course materials</h2>
       </div>
       <div class="content">
-        <p>Lecture notes will be linked here as they become available. Lecture PDFs are distributed through Google Classroom.</p>
-        <div class="materials">
-          <a class="material" href="https://github.com/watthanan-jat/SCIM311-Statistical-Modelling/blob/main/notes/chapter01_introduction_to_time_series.md">
-            <span>Lecture Note</span>
-            <h3>Chapter 1: Introduction to Time Series</h3>
-            <p>Read the note and access its R code, figures, and live demo.</p>
-          </a>
-          <article class="material pending">
-            <span>Coming soon</span>
-            <h3>Chapter 2: Fundamental Concepts</h3>
-            <p>Lecture note will be linked when available.</p>
-          </article>
-          <article class="material pending">
-            <span>Coming soon</span>
-            <h3>Chapter 3: Moving Average (MA) Models</h3>
-            <p>Lecture note will be linked when available.</p>
-          </article>
-          <article class="material pending">
-            <span>Coming soon</span>
-            <h3>Chapter 4: Autoregressive (AR) Models</h3>
-            <p>Lecture note will be linked when available.</p>
-          </article>
-          <article class="material pending">
-            <span>Coming soon</span>
-            <h3>Chapter 5: ARMA Models</h3>
-            <p>Lecture note will be linked when available.</p>
-          </article>
-          <article class="material pending">
-            <span>Coming soon</span>
-            <h3>Chapter 6: Nonstationary Series and ARIMA</h3>
-            <p>Lecture note will be linked when available.</p>
-          </article>
-          <article class="material pending">
-            <span>Coming soon</span>
-            <h3>Chapter 7: The Box–Jenkins Method</h3>
-            <p>Lecture note will be linked when available.</p>
-          </article>
-          <article class="material pending">
-            <span>Coming soon</span>
-            <h3>Chapter 8: SARIMA Models</h3>
-            <p>Lecture note will be linked when available.</p>
-          </article>
-          <article class="material pending">
-            <span>Coming soon</span>
-            <h3>Chapter 9: Beyond ARIMA</h3>
-            <p>Enrichment; not examined. Lecture note will be linked when available.</p>
-          </article>
-        </div>
+        <p>Chapter links will appear as lecture notes become available. Lecture PDFs are distributed through Google Classroom.</p>
+        <ul class="chapter-list">
+          <li><a href="https://github.com/watthanan-jat/SCIM311-Statistical-Modelling/blob/main/notes/chapter01_introduction_to_time_series.md">Chapter 1: Introduction to Time Series</a></li>
+          <li>Chapter 2: Fundamental Concepts</li>
+          <li>Chapter 3: Moving Average (MA) Models</li>
+          <li>Chapter 4: Autoregressive (AR) Models</li>
+          <li>Chapter 5: ARMA Models</li>
+          <li>Chapter 6: Nonstationary Series and ARIMA</li>
+          <li>Chapter 7: The Box–Jenkins Method</li>
+          <li>Chapter 8: SARIMA Models</li>
+          <li>Chapter 9: Beyond ARIMA</li>
+        </ul>
       </div>
     </section>
 
@@ -635,13 +612,13 @@
       <div class="section-title">
         <p class="kicker">Official information</p>
         <h2 id="details-title">Course details</h2>
-        <p>Information for the Part II time-series component.</p>
+        <p>Information for the time-series component.</p>
       </div>
       <div class="materials">
         <article class="material">
           <span>Time-series instructor</span>
           <h3>Asst. Prof. Dr. Watthanan Jatuviriyapornchai</h3>
-          <p>Lecturer for Part II: Time Series.</p>
+          <p>Lecturer for Time Series.</p>
         </article>
         <article class="material">
           <span>Learning format</span>
@@ -654,7 +631,7 @@
 
   <footer>
     <div class="wrap">
-      <p>SCIM311 Statistical Modelling · Part II: Time Series · First semester 2026</p>
+      <p>SCIM311 Statistical Modelling · First semester 2026</p>
       <p>Instructor: Watthanan Jatuviriyapornchai</p>
       <p>Updated <time datetime="2026-10-04">4 October 2026</time></p>
     </div>
