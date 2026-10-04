@@ -386,6 +386,9 @@
       margin: 0 0 10px;
     }
 
+    .makeup-date { display: block; font-weight: 700; }
+    .makeup-note { color: var(--green); display: block; font-size: 0.88rem; }
+
     .materials {
       display: grid;
       gap: 14px;
@@ -579,7 +582,7 @@
 
     <section class="section-grid" id="outcomes" aria-labelledby="outcomes-title">
       <div class="section-title">
-        <p class="kicker">What students will achieve</p>
+        <p class="kicker">Course goals</p>
         <h2 id="outcomes-title">CLOs</h2>
         <p>These are the two CLOs assessed in the time-series component.</p>
       </div>
@@ -635,7 +638,7 @@
       <div class="section-title">
         <p class="kicker">Weekly roadmap</p>
         <h2 id="schedule-title">Course Schedule</h2>
-        <p class="schedule-meta">Thursdays · 13:00–16:00<br>Room: M305</p>
+        <p class="schedule-meta">Regular classes: Thursdays · 13:00–16:00<br>Room: M305</p>
         <p>The final exam date and time will be announced.</p>
       </div>
       <div class="content">
@@ -650,7 +653,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td>10</td><td><time datetime="2026-10-08">8 Oct 2026</time></td><td>Introduction to time series; time plots, components, simple models, and moments in time.</td><td>—</td></tr>
+              <tr><td>10</td><td><del>8 Oct 2026</del><time class="makeup-date" datetime="2026-10-14">Wed 14 Oct 2026</time><span class="makeup-note">Make-up class · 13:30–16:30</span></td><td>Introduction to time series; time plots, components, simple models, and moments in time.</td><td>—</td></tr>
               <tr><td>11</td><td><time datetime="2026-10-15">15 Oct 2026</time></td><td>Stationarity, autocovariance, sample ACF and its significance; the backshift operator.</td><td>—</td></tr>
               <tr><td>12</td><td><time datetime="2026-10-22">22 Oct 2026</time></td><td>Moving-average and autoregressive models; stationarity, ACF, PACF, and model identification.</td><td>Assignment 1 released</td></tr>
               <tr><td>13</td><td><time datetime="2026-10-29">29 Oct 2026</time></td><td>Fitting and forecasting MA and AR models; diagnostics, ARMA models, and their properties.</td><td>—</td></tr>
