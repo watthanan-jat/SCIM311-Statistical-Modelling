@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="SCIM311 Statistical Modelling Part II: time-series topics, learning outcomes, assessment, and weekly schedule.">
-  <title>SCIM311 Part II: Time Series</title>
+  <meta name="description" content="SCIM311 Statistical Modelling Part II: time-series topics, CLOs, assessment, and weekly schedule.">
+  <title>SCIM311 Statistical Modelling · Part II: Time Series</title>
   <style>
     :root {
       color-scheme: light;
@@ -108,9 +108,17 @@
 
     h1 {
       color: var(--green-deep);
-      font-size: clamp(3rem, 8vw, 6.3rem);
+      font-size: clamp(2.8rem, 5.2vw, 4.6rem);
       letter-spacing: -0.055em;
-      margin-bottom: 22px;
+      margin-bottom: 4px;
+    }
+
+    .hero-subtitle {
+      color: var(--green);
+      font-size: clamp(1.7rem, 3.6vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin: 0 0 24px;
     }
 
     h2 {
@@ -297,18 +305,6 @@
     .assessment h3 { margin: 0 0 8px; }
     .assessment p { margin: 0; }
 
-    .note {
-      background: #fffdf4;
-      border: 1px solid #e9dfb8;
-      border-radius: 16px;
-      color: #5c5539;
-      padding: 18px 20px;
-    }
-
-    .note h3 { margin-bottom: 10px; }
-    .note ul { margin: 0; padding-left: 1.4rem; }
-    .note li + li { margin-top: 6px; }
-
     .table-shell {
       background: var(--white);
       border: 1px solid var(--line);
@@ -363,9 +359,14 @@
       text-decoration: none;
     }
 
-    .material:hover {
+    a.material:hover {
       border-color: var(--green-bright);
       box-shadow: var(--shadow);
+    }
+
+    .material.pending {
+      background: var(--soft);
+      border-style: dashed;
     }
 
     .material span {
@@ -411,7 +412,7 @@
       nav { align-items: flex-start; flex-direction: column; gap: 12px; }
       .nav-links { justify-content: flex-start; }
       .cards, .materials { grid-template-columns: 1fr; }
-      h1 { font-size: clamp(2.8rem, 17vw, 4.2rem); }
+      h1 { font-size: clamp(2.8rem, 11vw, 4.2rem); }
     }
   </style>
 </head>
@@ -422,7 +423,7 @@
         <a class="brand" href="#top">SCIM311</a>
         <div class="nav-links">
           <a href="#overview">Overview</a>
-          <a href="#outcomes">Learning goals</a>
+          <a href="#outcomes">CLOs</a>
           <a href="#assessment">Assessment</a>
           <a href="#schedule">Week plan</a>
           <a href="#materials">Materials</a>
@@ -432,8 +433,9 @@
 
       <div class="hero">
         <div>
-          <p class="eyebrow">SCIM311 Statistical Modelling · Part II</p>
-          <h1>Time Series</h1>
+          <p class="eyebrow">SCIM311</p>
+          <h1>Statistical Modelling</h1>
+          <p class="hero-subtitle">Part II: Time Series</p>
           <p class="lead">
             Understand time-dependent data, build and check time-series models,
             and use them to make forecasts.
@@ -490,8 +492,8 @@
     <section class="section-grid" id="outcomes" aria-labelledby="outcomes-title">
       <div class="section-title">
         <p class="kicker">What students will achieve</p>
-        <h2 id="outcomes-title">Part II learning outcomes</h2>
-        <p>These are the two course learning outcomes assessed in Part II.</p>
+        <h2 id="outcomes-title">Part II CLOs</h2>
+        <p>These are the two CLOs assessed in Part II.</p>
       </div>
       <div class="content">
         <div class="cards">
@@ -538,15 +540,6 @@
             <p>Work with a partner on short pen-and-paper activities that practise the week’s time-series ideas. Submit one answer sheet per pair during class. Each activity is recorded as submitted or not submitted; answers are not graded for correctness.</p>
           </div>
         </div>
-        <aside class="note" aria-labelledby="collaboration-title">
-          <h3 id="collaboration-title">Assignment collaboration policy</h3>
-          <ul>
-            <li>Discussing ideas and approaches with classmates is encouraged.</li>
-            <li>Each student must write and submit their own solution separately.</li>
-            <li>Do not share solutions or copy another student’s work.</li>
-            <li>Plagiarism receives a mark of zero for that work.</li>
-          </ul>
-        </aside>
       </div>
     </section>
 
@@ -562,20 +555,19 @@
             <thead>
               <tr>
                 <th scope="col">Week</th>
-                <th scope="col">Content</th>
-                <th scope="col">Pair activity</th>
+                <th scope="col">Topics</th>
                 <th scope="col">Assessment</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td>10</td><td>Chapter 1 + Chapter 2 §1</td><td>Read four time plots; moments of three processes.</td><td>—</td></tr>
-              <tr><td>11</td><td>Chapter 2 §2 + Chapter 3 §1</td><td>Stationarity, sample ACF by hand, significance, and backshift.</td><td>—</td></tr>
-              <tr><td>12</td><td>Chapter 3 §2 + Chapter 4 §§1–5</td><td>MA(2) and AR(2) moments, roots, PACF, and identification.</td><td>Assignment 1 released</td></tr>
-              <tr><td>13</td><td>Chapter 3 §3 + Chapter 4 §6 + Chapter 5</td><td>Read AR fits to log lynx; roots, cycle period, forecasts by hand, and ARMA(1,1).</td><td>—</td></tr>
-              <tr><td>14</td><td>Quiz + Chapter 6</td><td>Expand ARIMA; recursion; over-differencing; choose <em>d</em> for <code>BJsales</code>.</td><td>Paper-based quiz</td></tr>
-              <tr><td>15</td><td>Chapter 7 §§1–5</td><td>Box–Jenkins on <code>BJsales</code>: candidates, AIC/BIC, diagnostics, and refinement.</td><td>Assignment 2 released</td></tr>
-              <tr><td>16</td><td>Chapter 7 §6 + Chapter 8</td><td><code>BJsales</code> forecasts by hand; seasonal ACF; airline model for <code>USAccDeaths</code>.</td><td>—</td></tr>
-              <tr><td>17</td><td>Final examination</td><td>Written examination on the Part II time-series material.</td><td>Final exam</td></tr>
+              <tr><td>10</td><td>Introduction to time series; time plots, components, simple models, and moments in time.</td><td>—</td></tr>
+              <tr><td>11</td><td>Stationarity, autocovariance, sample ACF and its significance; the backshift operator.</td><td>—</td></tr>
+              <tr><td>12</td><td>Moving-average and autoregressive models; stationarity, ACF, PACF, and model identification.</td><td>Assignment 1 released</td></tr>
+              <tr><td>13</td><td>Fitting and forecasting MA and AR models; diagnostics, ARMA models, and their properties.</td><td>—</td></tr>
+              <tr><td>14</td><td>Nonstationary series, differencing, ARIMA models, and model identification.</td><td>Paper-based quiz</td></tr>
+              <tr><td>15</td><td>Box–Jenkins modelling: identification, estimation, diagnostics, and model refinement.</td><td>Assignment 2 released</td></tr>
+              <tr><td>16</td><td>Forecasting with ARIMA; seasonal time series, SARIMA models, and seasonal forecasting.</td><td>—</td></tr>
+              <tr><td>17</td><td>Final examination on Part II time-series topics.</td><td>Final exam</td></tr>
             </tbody>
           </table>
         </div>
@@ -588,13 +580,53 @@
         <h2 id="materials-title">Course materials</h2>
       </div>
       <div class="content">
-        <p>Lecture PDFs are distributed through Google Classroom.</p>
+        <p>Lecture notes will be linked here as they become available. Lecture PDFs are distributed through Google Classroom.</p>
         <div class="materials">
           <a class="material" href="https://github.com/watthanan-jat/SCIM311-Statistical-Modelling/blob/main/notes/chapter01_introduction_to_time_series.md">
             <span>Lecture Note</span>
             <h3>Chapter 1: Introduction to Time Series</h3>
             <p>Read the note and access its R code, figures, and live demo.</p>
           </a>
+          <article class="material pending">
+            <span>Coming soon</span>
+            <h3>Chapter 2: Fundamental Concepts</h3>
+            <p>Lecture note will be linked when available.</p>
+          </article>
+          <article class="material pending">
+            <span>Coming soon</span>
+            <h3>Chapter 3: Moving Average (MA) Models</h3>
+            <p>Lecture note will be linked when available.</p>
+          </article>
+          <article class="material pending">
+            <span>Coming soon</span>
+            <h3>Chapter 4: Autoregressive (AR) Models</h3>
+            <p>Lecture note will be linked when available.</p>
+          </article>
+          <article class="material pending">
+            <span>Coming soon</span>
+            <h3>Chapter 5: ARMA Models</h3>
+            <p>Lecture note will be linked when available.</p>
+          </article>
+          <article class="material pending">
+            <span>Coming soon</span>
+            <h3>Chapter 6: Nonstationary Series and ARIMA</h3>
+            <p>Lecture note will be linked when available.</p>
+          </article>
+          <article class="material pending">
+            <span>Coming soon</span>
+            <h3>Chapter 7: The Box–Jenkins Method</h3>
+            <p>Lecture note will be linked when available.</p>
+          </article>
+          <article class="material pending">
+            <span>Coming soon</span>
+            <h3>Chapter 8: SARIMA Models</h3>
+            <p>Lecture note will be linked when available.</p>
+          </article>
+          <article class="material pending">
+            <span>Coming soon</span>
+            <h3>Chapter 9: Beyond ARIMA</h3>
+            <p>Enrichment; not examined. Lecture note will be linked when available.</p>
+          </article>
         </div>
       </div>
     </section>
