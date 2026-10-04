@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Course information for SCIM311 Statistical Modelling: generalized linear models, time-series analysis, learning outcomes, assessment, and schedule.">
-  <title>SCIM311 Statistical Modelling</title>
+  <meta name="description" content="SCIM311 Statistical Modelling Part II: time-series topics, learning outcomes, assessment, and weekly schedule.">
+  <title>SCIM311 Part II: Time Series</title>
   <style>
     :root {
       color-scheme: light;
@@ -275,7 +275,7 @@
     .assessment-grid {
       display: grid;
       gap: 16px;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       margin: 24px 0;
     }
 
@@ -294,10 +294,8 @@
       margin-bottom: 9px;
     }
 
-    .assessment span {
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
+    .assessment h3 { margin: 0 0 8px; }
+    .assessment p { margin: 0; }
 
     .note {
       background: #fffdf4;
@@ -306,6 +304,10 @@
       color: #5c5539;
       padding: 18px 20px;
     }
+
+    .note h3 { margin-bottom: 10px; }
+    .note ul { margin: 0; padding-left: 1.4rem; }
+    .note li + li { margin-top: 6px; }
 
     .table-shell {
       background: var(--white);
@@ -420,7 +422,7 @@
         <a class="brand" href="#top">SCIM311</a>
         <div class="nav-links">
           <a href="#overview">Overview</a>
-          <a href="#outcomes">Outcomes</a>
+          <a href="#outcomes">Learning goals</a>
           <a href="#assessment">Assessment</a>
           <a href="#schedule">Schedule</a>
           <a href="#materials">Materials</a>
@@ -430,23 +432,23 @@
 
       <div class="hero">
         <div>
-          <p class="eyebrow">Industrial Mathematics and Data Science</p>
-          <h1>Statistical Modelling</h1>
+          <p class="eyebrow">SCIM311 Statistical Modelling · Part II</p>
+          <h1>Time Series</h1>
           <p class="lead">
-            Generalized linear models and their applications, followed by time-series
-            analysis, model identification, diagnostics, and forecasting.
+            Understand time-dependent data, build and check time-series models,
+            and use them to make forecasts.
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#overview">Course overview</a>
-            <a class="button secondary" href="#schedule">Full schedule</a>
+            <a class="button primary" href="#overview">Part II overview</a>
+            <a class="button secondary" href="#assessment">Assessment: 45%</a>
           </div>
         </div>
 
         <dl class="course-facts" aria-label="Course facts">
           <div><dt>Course</dt><dd>SCIM 311</dd></div>
-          <div><dt>Credits</dt><dd>3 (3-0-6)</dd></div>
-          <div><dt>Semester</dt><dd>First semester, 2026</dd></div>
-          <div><dt>Level</dt><dd>Year 3 · Elective</dd></div>
+          <div><dt>Part</dt><dd>II · Time Series</dd></div>
+          <div><dt>Weeks</dt><dd>10–17</dd></div>
+          <div><dt>Weight</dt><dd>45% of the course grade</dd></div>
           <div><dt>Software</dt><dd>R</dd></div>
         </dl>
       </div>
@@ -456,31 +458,30 @@
   <main class="wrap">
     <section class="section-grid" id="overview" aria-labelledby="overview-title">
       <div class="section-title">
-        <p class="kicker">What the course covers</p>
-        <h2 id="overview-title">Course overview</h2>
+        <p class="kicker">Weeks 10–17</p>
+        <h2 id="overview-title">Part II overview</h2>
       </div>
       <div class="content">
         <p class="intro">
-          SCIM311 develops students' ability to explain and apply statistical
-          modelling concepts, especially generalized linear models and time-series
-          models, and to use those models appropriately in data analysis.
+          Part II of SCIM311 focuses on time-series analysis: how observations
+          depend on time, how to describe that dependence, and how to forecast
+          future values.
         </p>
         <p>
-          The first half of the semester introduces generalized linear models,
-          response distributions, fitting, interpretation, and applications. After
-          the midterm, the course turns to the structure of time-dependent data and
-          the models used to analyse and forecast it.
+          We start with plots, stationarity, autocorrelation, and the ACF and PACF.
+          We then study MA, AR, ARMA, ARIMA, and SARIMA models, using the
+          Box–Jenkins workflow to identify, fit, check, and use models in R.
         </p>
         <div class="cards">
           <article class="card">
-            <span class="number">Before midterm · Weeks 1–8</span>
-            <h3>Generalized Linear Models</h3>
-            <p>Concepts, response distributions, model fitting, interpretation, and applications.</p>
+            <span class="number">Weeks 10–13</span>
+            <h3>Foundations and stationary models</h3>
+            <p>Time-series structure, stationarity, ACF/PACF, and MA, AR, and ARMA models.</p>
           </article>
           <article class="card">
-            <span class="number">After midterm · Weeks 10–16</span>
-            <h3>Time-Series Models</h3>
-            <p>Stationarity, ACF/PACF, MA, AR, ARMA, ARIMA, SARIMA, and forecasting.</p>
+            <span class="number">Weeks 14–16</span>
+            <h3>Modelling and forecasting</h3>
+            <p>Differencing, ARIMA, Box–Jenkins diagnostics, SARIMA, and forecasts.</p>
           </article>
         </div>
       </div>
@@ -489,21 +490,11 @@
     <section class="section-grid" id="outcomes" aria-labelledby="outcomes-title">
       <div class="section-title">
         <p class="kicker">What students will achieve</p>
-        <h2 id="outcomes-title">Course learning outcomes</h2>
-        <p>All four outcomes cover the complete course.</p>
+        <h2 id="outcomes-title">Part II learning outcomes</h2>
+        <p>These are the two course learning outcomes assessed in Part II.</p>
       </div>
       <div class="content">
         <div class="cards">
-          <article class="card">
-            <span class="number">CLO1</span>
-            <h3>Explain GLM concepts</h3>
-            <p>Describe generalized linear model concepts and select models for different response types.</p>
-          </article>
-          <article class="card">
-            <span class="number">CLO2</span>
-            <h3>Apply generalized linear models</h3>
-            <p>Apply GLMs to data analysis and interpret fitted models in statistical and practical terms.</p>
-          </article>
           <article class="card">
             <span class="number">CLO3</span>
             <h3>Analyse stationary time series</h3>
@@ -520,52 +511,50 @@
 
     <section class="section-grid" id="assessment" aria-labelledby="assessment-title">
       <div class="section-title">
-        <p class="kicker">Evidence of learning</p>
-        <h2 id="assessment-title">Assessment</h2>
-        <p>Weights shown below are from the official 2026 course specification.</p>
+        <p class="kicker">45% of the course grade</p>
+        <h2 id="assessment-title">Part II assessment</h2>
+        <p>The four components below add up to 45% of the overall course grade.</p>
       </div>
       <div class="content">
         <div class="assessment-grid">
           <div class="assessment">
-            <strong>25%</strong>
-            <span>Individual work, including assignments and in-class activities</span>
+            <strong>30%</strong>
+            <h3>Final exam</h3>
+            <p>A written exam covering the Part II time-series material.</p>
           </div>
           <div class="assessment">
-            <strong>60%</strong>
-            <span>Written examinations across the course learning outcomes</span>
+            <strong>5%</strong>
+            <h3>R coding assignments</h3>
+            <p>Two assignments require you to write and submit your own R code. An automatic grader checks whether your code produces the required results, so follow each assignment’s instructions carefully.</p>
           </div>
           <div class="assessment">
-            <strong>15%</strong>
-            <span>Project work connected to the generalized linear model outcomes</span>
+            <strong>5%</strong>
+            <h3>Quizzes</h3>
+            <p>The paper-based quiz in Week 15 tests your understanding of concepts covered in class and in the assignments. Bring a pen.</p>
+          </div>
+          <div class="assessment">
+            <strong>5%</strong>
+            <h3>Q&amp;A</h3>
+            <p>Answer a few questions that check your understanding. Incorrect answers carry no penalty. Submit your answers before leaving class.</p>
           </div>
         </div>
-        <div class="table-shell">
-          <table aria-label="Assessment weight by course learning outcome">
-            <thead>
-              <tr>
-                <th scope="col">Outcome</th>
-                <th scope="col">Individual work</th>
-                <th scope="col">Examination</th>
-                <th scope="col">Project</th>
-                <th scope="col">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>CLO1</td><td>5%</td><td>10%</td><td>5%</td><td>20%</td></tr>
-              <tr><td>CLO2</td><td>5%</td><td>20%</td><td>10%</td><td>35%</td></tr>
-              <tr><td>CLO3</td><td>7.5%</td><td>10%</td><td>—</td><td>17.5%</td></tr>
-              <tr><td>CLO4</td><td>7.5%</td><td>20%</td><td>—</td><td>27.5%</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <aside class="note" aria-labelledby="collaboration-title">
+          <h3 id="collaboration-title">Assignment collaboration policy</h3>
+          <ul>
+            <li>Discussing ideas and approaches with classmates is encouraged.</li>
+            <li>Each student must write and submit their own solution separately.</li>
+            <li>Do not share solutions or copy another student’s work.</li>
+            <li>Plagiarism receives a mark of zero for that work.</li>
+          </ul>
+        </aside>
       </div>
     </section>
 
     <section class="section-grid" id="schedule" aria-labelledby="schedule-title">
       <div class="section-title">
         <p class="kicker">Weekly roadmap</p>
-        <h2 id="schedule-title">Full course schedule</h2>
-        <p>The official plan covers both halves of the semester.</p>
+        <h2 id="schedule-title">Part II schedule</h2>
+        <p>Time-series topics and the final examination, Weeks 10–17.</p>
       </div>
       <div class="content">
         <div class="table-shell">
@@ -578,16 +567,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td>1–8</td><td>Generalized Linear Models</td><td>Concepts, response distributions, fitting, interpretation, and applications. Lecturer: Pannapa Changpetch.</td></tr>
-              <tr><td>9</td><td>Midterm examination</td><td>Assessment of the pre-midterm generalized linear model component.</td></tr>
               <tr><td>10</td><td>Introduction to time series</td><td>Time-indexed data, components, plots, and the role of R.</td></tr>
               <tr><td>11</td><td>Fundamental concepts</td><td>Stationarity, autocovariance, autocorrelation, and ACF/PACF.</td></tr>
               <tr><td>12</td><td>MA and AR models</td><td>Model structure, properties, identification, and interpretation.</td></tr>
               <tr><td>13</td><td>ARMA models</td><td>Combining autoregressive and moving-average dynamics.</td></tr>
               <tr><td>14</td><td>Nonstationary processes and ARIMA</td><td>Differencing, integration, model formulation, and diagnostics.</td></tr>
-              <tr><td>15</td><td>Box–Jenkins method</td><td>Identification, estimation, diagnostic checking, and forecasting.</td></tr>
+              <tr><td>15</td><td>Box–Jenkins method and quiz</td><td>Identification, estimation, diagnostic checking, and forecasting. Paper-based quiz; bring a pen.</td></tr>
               <tr><td>16</td><td>SARIMA models</td><td>Seasonal dependence, seasonal differencing, and seasonal forecasts.</td></tr>
-              <tr><td>17</td><td>Final examination</td><td>Assessment of the course learning outcomes.</td></tr>
+              <tr><td>17</td><td>Final examination</td><td>Written examination on the Part II time-series material.</td></tr>
             </tbody>
           </table>
         </div>
@@ -608,23 +595,13 @@
       <div class="section-title">
         <p class="kicker">Official information</p>
         <h2 id="details-title">Course details</h2>
-        <p>Official course information for the 2026 offering.</p>
+        <p>Information for the Part II time-series component.</p>
       </div>
       <div class="materials">
         <article class="material">
-          <span>Course coordinator</span>
-          <h3>Assoc. Prof. Pannapa Changpetch, PhD</h3>
-          <p>Responsible instructor and lecturer for the pre-midterm GLM component.</p>
-        </article>
-        <article class="material">
           <span>Time-series instructor</span>
           <h3>Asst. Prof. Dr. Watthanan Jatuviriyapornchai</h3>
-          <p>Lecturer for the post-midterm time-series component.</p>
-        </article>
-        <article class="material">
-          <span>Requirements</span>
-          <h3>No prerequisites or co-requisites</h3>
-          <p>The course is a Year 3 elective in Industrial Mathematics and Data Science.</p>
+          <p>Lecturer for Part II: Time Series.</p>
         </article>
         <article class="material">
           <span>Learning format</span>
@@ -637,9 +614,9 @@
 
   <footer>
     <div class="wrap">
-      <p>SCIM311 Statistical Modelling · First semester 2026</p>
-      <p>GLM: Pannapa Changpetch · Time series: Watthanan Jatuviriyapornchai</p>
-      <p>Updated <time datetime="2026-08-27">27 August 2026</time></p>
+      <p>SCIM311 Statistical Modelling · Part II: Time Series · First semester 2026</p>
+      <p>Instructor: Watthanan Jatuviriyapornchai</p>
+      <p>Updated <time datetime="2026-10-04">4 October 2026</time></p>
     </div>
   </footer>
 </body>
