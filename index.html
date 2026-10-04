@@ -424,7 +424,7 @@
           <a href="#overview">Overview</a>
           <a href="#outcomes">Learning goals</a>
           <a href="#assessment">Assessment</a>
-          <a href="#schedule">Schedule</a>
+          <a href="#schedule">Week plan</a>
           <a href="#materials">Materials</a>
           <a href="#details">Course details</a>
         </div>
@@ -525,12 +525,12 @@
           <div class="assessment">
             <strong>5%</strong>
             <h3>R coding assignments</h3>
-            <p>Two assignments require you to write and submit your own R code. An automatic grader checks whether your code produces the required results, so follow each assignment’s instructions carefully.</p>
+            <p>Two assignments require you to write and submit your own R code. Assignment 1 is released in Week 12 and Assignment 2 in Week 15. An automatic grader checks whether your code produces the required results, so follow each assignment’s instructions carefully.</p>
           </div>
           <div class="assessment">
             <strong>5%</strong>
             <h3>Quizzes</h3>
-            <p>The paper-based quiz in Week 15 tests your understanding of concepts covered in class and in the assignments. Bring a pen.</p>
+            <p>The paper-based quiz in Week 14 tests your understanding of concepts covered in class and in the assignments. Bring a pen.</p>
           </div>
           <div class="assessment">
             <strong>5%</strong>
@@ -553,8 +553,8 @@
     <section class="section-grid" id="schedule" aria-labelledby="schedule-title">
       <div class="section-title">
         <p class="kicker">Weekly roadmap</p>
-        <h2 id="schedule-title">Part II schedule</h2>
-        <p>Time-series topics and the final examination, Weeks 10–17.</p>
+        <h2 id="schedule-title">Part II week plan</h2>
+        <p>Weeks 10–16 follow the lecture-script plan; Week 17 is the written final examination.</p>
       </div>
       <div class="content">
         <div class="table-shell">
@@ -562,19 +562,20 @@
             <thead>
               <tr>
                 <th scope="col">Week</th>
-                <th scope="col">Topic</th>
-                <th scope="col">Learning focus</th>
+                <th scope="col">Content</th>
+                <th scope="col">Pair activity</th>
+                <th scope="col">Assessment</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td>10</td><td>Introduction to time series</td><td>Time-indexed data, components, plots, and the role of R.</td></tr>
-              <tr><td>11</td><td>Fundamental concepts</td><td>Stationarity, autocovariance, autocorrelation, and ACF/PACF.</td></tr>
-              <tr><td>12</td><td>MA and AR models</td><td>Model structure, properties, identification, and interpretation.</td></tr>
-              <tr><td>13</td><td>ARMA models</td><td>Combining autoregressive and moving-average dynamics.</td></tr>
-              <tr><td>14</td><td>Nonstationary processes and ARIMA</td><td>Differencing, integration, model formulation, and diagnostics.</td></tr>
-              <tr><td>15</td><td>Box–Jenkins method and quiz</td><td>Identification, estimation, diagnostic checking, and forecasting. Paper-based quiz; bring a pen.</td></tr>
-              <tr><td>16</td><td>SARIMA models</td><td>Seasonal dependence, seasonal differencing, and seasonal forecasts.</td></tr>
-              <tr><td>17</td><td>Final examination</td><td>Written examination on the Part II time-series material.</td></tr>
+              <tr><td>10</td><td>Chapter 1 + Chapter 2 §1</td><td>Read four time plots; moments of three processes.</td><td>—</td></tr>
+              <tr><td>11</td><td>Chapter 2 §2 + Chapter 3 §1</td><td>Stationarity, sample ACF by hand, significance, and backshift.</td><td>—</td></tr>
+              <tr><td>12</td><td>Chapter 3 §2 + Chapter 4 §§1–5</td><td>MA(2) and AR(2) moments, roots, PACF, and identification.</td><td>Assignment 1 released</td></tr>
+              <tr><td>13</td><td>Chapter 3 §3 + Chapter 4 §6 + Chapter 5</td><td>Read AR fits to log lynx; roots, cycle period, forecasts by hand, and ARMA(1,1).</td><td>—</td></tr>
+              <tr><td>14</td><td>Quiz + Chapter 6</td><td>Expand ARIMA; recursion; over-differencing; choose <em>d</em> for <code>BJsales</code>.</td><td>Paper-based quiz</td></tr>
+              <tr><td>15</td><td>Chapter 7 §§1–5</td><td>Box–Jenkins on <code>BJsales</code>: candidates, AIC/BIC, diagnostics, and refinement.</td><td>Assignment 2 released</td></tr>
+              <tr><td>16</td><td>Chapter 7 §6 + Chapter 8</td><td><code>BJsales</code> forecasts by hand; seasonal ACF; airline model for <code>USAccDeaths</code>.</td><td>—</td></tr>
+              <tr><td>17</td><td>Final examination</td><td>Written examination on the Part II time-series material.</td><td>Final exam</td></tr>
             </tbody>
           </table>
         </div>
