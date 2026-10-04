@@ -1,0 +1,249 @@
+---
+title: "Chapter 1 In-Class R Demo: What Is a Time Series?"
+output: html_document
+---
+
+## Demo Goal
+
+Use real and simulated series to show why time order matters.
+
+Reference anchor: introductory time-series examples and decomposition ideas from Brockwell-Davis, Cryer-Chan, and Shumway-Stoffer.
+
+```{r setup}
+set.seed(311)
+par(mfrow = c(1, 1))
+```
+
+## 1. Cross-Sectional Data Versus Time Series
+
+```{r cross-sectional}
+height <- c(165, 170, 160, 175, 168, 172, 158, 180, 169, 162)
+weight <- c(58, 65, 55, 72, 60, 68, 54, 75, 62, 57)
+plot(height, weight, pch = 19, col = "steelblue",
+     main = "Cross-sectional data: no time order",
+     xlab = "Height", ylab = "Weight")
+```
+
+Interpretation prompt:
+
+- What does one point represent?
+- Would swapping the order of the rows change the meaning?
+
+```{r time-series}
+gpa <- c(2.8, 3.0, 3.2, 3.4, 3.5, 3.6, 3.7, 3.8)
+plot.ts(gpa, type = "o", pch = 19, col = "firebrick",
+        main = "Time series: order matters",
+        xlab = "Semester", ylab = "GPA")
+```
+
+Interpretation prompt:
+
+- What does the line add that a scatterplot does not?
+- What pattern would be lost if the order were shuffled?
+
+## 2. Trend, Seasonality, and Noise
+
+```{r components}
+n <- 120
+t <- 1:n
+trend <- 0.05 * t
+season <- 1.5 * sin(2 * pi * t / 12)
+noise <- rnorm(n, 0, 0.4)
+y <- 10 + trend + season + noise
+
+plot.ts(y, main = "Trend + seasonality + noise",
+        ylab = "Observed value", xlab = "Time")
+```
+
+Interpretation prompt:
+
+- Which part looks like trend?
+- Which part repeats?
+- Which part is unpredictable?
+
+## 3. Classical Decomposition
+
+```{r decomposition}
+y_ts <- ts(y, frequency = 12)
+d <- decompose(y_ts, type = "additive")
+plot(d)
+```
+
+Live change:
+
+- Increase the noise standard deviation from `0.4` to `1.5`.
+- Rerun the plot and decomposition.
+- Ask whether the trend and seasonality are still easy to see.
+- Replace `decompose()` by `stl(y_ts, s.window = "periodic")` and compare.
+
+## 4. Built-In Data: AirPassengers
+
+```{r airpassengers}
+plot(AirPassengers, main = "AirPassengers",
+     ylab = "Passengers", xlab = "Year")
+plot(log(AirPassengers), main = "Log AirPassengers",
+     ylab = "log(Passengers)", xlab = "Year")
+```
+
+Interpretation prompt:
+
+- Why does the seasonal variation grow over time in the original plot?
+- Why does the log transformation help?
+
+## 5. Inspecting a ts Object
+
+```{r ts-inspect}
+AP <- AirPassengers
+start(AP)      # first observation: year and month
+end(AP)        # last observation
+frequency(AP)  # observations per year; 12 = monthly
+class(AP)      # "ts"
+length(AP)     # number of observations
+head(AP)       # first 6 observations
+tail(AP)       # last 6 observations
+```
+
+Interpretation prompt:
+
+- How does R know that the first value is January 1949?
+- What would `frequency()` be for quarterly data?
+
+## 6. Annual Totals and Seasonal Boxplots
+
+`aggregate()` turns a monthly series into yearly totals, which hides the seasonal
+pattern and shows the long-run trend. `cycle()` gives the month (1 to 12) of each
+observation, so `boxplot(AP ~ cycle(AP))` puts all Januaries together, all
+Februaries together, and so on.
+
+```{r ts-aggregate, fig.height = 7}
+AP_annual <- aggregate(AP)  # yearly totals
+AP_annual
+
+par(mfrow = c(2, 1))
+plot(AP_annual, main = "AirPassengers: annual totals",
+     xlab = "Year", ylab = "Passengers (1000s)")
+boxplot(AP ~ cycle(AP), main = "AirPassengers: distribution by month",
+        xlab = "Month", ylab = "Passengers (1000s)")
+par(mfrow = c(1, 1))
+```
+
+`window()` cuts out part of a series, so we can compare early and late years.
+
+```{r ts-window, fig.height = 7}
+AP_early <- window(AP, start = c(1949, 1), end = c(1952, 12))
+AP_late  <- window(AP, start = c(1958, 1), end = c(1960, 12))
+
+par(mfrow = c(2, 1))
+boxplot(AP_early ~ cycle(AP_early), main = "1949-1952",
+        xlab = "Month", ylab = "Passengers (1000s)")
+boxplot(AP_late ~ cycle(AP_late), main = "1958-1960",
+        xlab = "Month", ylab = "Passengers (1000s)")
+par(mfrow = c(1, 1))
+```
+
+Interpretation prompt:
+
+- Which months are busiest? Is that the same early and late?
+- Has the size of the seasonal swing changed? What does that suggest about an
+  additive or a multiplicative model?
+
+## 7. Another Monthly Series: UK Road Casualties
+
+`UKDriverDeaths` is the monthly number of car drivers killed or seriously
+injured in Great Britain, January 1969 to December 1984. Wearing a seat belt
+became compulsory on 31 January 1983.
+
+```{r drivers}
+drivers <- UKDriverDeaths
+start(drivers); end(drivers); frequency(drivers)
+
+plot(drivers, main = "UK car drivers killed or seriously injured",
+     xlab = "Year", ylab = "Drivers per month")
+abline(v = 1983 + 1/12, col = "firebrick", lty = 2)  # seat belt law, Feb 1983
+```
+
+```{r drivers-season, fig.height = 7}
+par(mfrow = c(2, 1))
+plot(aggregate(drivers, FUN = mean), main = "Annual mean",
+     xlab = "Year", ylab = "Drivers per month")
+boxplot(drivers ~ cycle(drivers), main = "Distribution by month",
+        xlab = "Month", ylab = "Drivers per month")
+par(mfrow = c(1, 1))
+
+# Each month's mean relative to the overall mean
+round(tapply(drivers, cycle(drivers), mean) / mean(drivers), 2)
+```
+
+```{r drivers-window, fig.height = 7}
+drivers_early <- window(drivers, start = c(1969, 1), end = c(1973, 12))
+drivers_late  <- window(drivers, start = c(1979, 1), end = c(1982, 12))
+
+par(mfrow = c(2, 1))
+boxplot(drivers_early ~ cycle(drivers_early), main = "1969-1973",
+        xlab = "Month", ylab = "Drivers per month")
+boxplot(drivers_late ~ cycle(drivers_late), main = "1979-1982",
+        xlab = "Month", ylab = "Drivers per month")
+par(mfrow = c(1, 1))
+```
+
+Interpretation prompt:
+
+- Which months have the most casualties, and why might that be?
+- What happens to the level after February 1983? Is that a trend, a season, or
+  something else?
+
+## 8. Several Series Together
+
+`mdeaths`, `fdeaths` and `ldeaths` are monthly deaths from bronchitis, emphysema
+and asthma in the UK, 1974-1979, for males, females and in total. `cbind()`
+combines them, and `plot()` draws one panel per series.
+
+```{r lung-deaths, fig.height = 7}
+plot(cbind(males = mdeaths, females = fdeaths, total = ldeaths),
+     main = "UK deaths from lung diseases, 1974-1979", xlab = "Year")
+```
+
+```{r lung-season, fig.height = 8}
+par(mfrow = c(3, 1))
+boxplot(mdeaths ~ cycle(mdeaths), main = "Males by month",
+        xlab = "Month", ylab = "Deaths")
+boxplot(fdeaths ~ cycle(fdeaths), main = "Females by month",
+        xlab = "Month", ylab = "Deaths")
+boxplot(ldeaths ~ cycle(ldeaths), main = "Total by month",
+        xlab = "Month", ylab = "Deaths")
+par(mfrow = c(1, 1))
+
+aggregate(cbind(males = mdeaths, females = fdeaths, total = ldeaths))  # yearly totals
+```
+
+Interpretation prompt:
+
+- Do the three series share the same seasonal pattern?
+- Is there a trend, or mainly seasonality?
+
+## 9. Deterministic and Stochastic Trends
+
+A least-squares line for `LakeHuron` (a deterministic trend, as in the
+notes), next to three random walks $S_t = S_{t-1} + X_t$ with iid $N(0, 1)$
+steps, which have mean $0$ for every $t$.
+
+```{r trends, fig.height = 7}
+t <- seq_along(LakeHuron)
+fit_lake <- lm(LakeHuron ~ t)
+coef(fit_lake)
+
+walks <- replicate(3, cumsum(rnorm(98)))
+par(mfrow = c(2, 1))
+plot(as.numeric(LakeHuron), type = "o", pch = 20, main = "Lake Huron level",
+     xlab = "t (1 = 1875)", ylab = "Level (feet)")
+abline(fit_lake, col = "firebrick", lwd = 2)
+matplot(walks, type = "l", lty = 1, main = "Three random walks",
+        xlab = "t", ylab = "S_t")
+abline(h = 0, lty = 2)
+par(mfrow = c(1, 1))
+```
+
+Interpretation prompt:
+
+- Do the random walks look as if they had trends? Do they all go the same way?
+- What would we have to believe to extrapolate the Lake Huron line to 2030?
