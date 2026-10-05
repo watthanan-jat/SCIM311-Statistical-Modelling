@@ -24,7 +24,7 @@ plot(height, weight, pch = 19, col = "steelblue",
      xlab = "Height", ylab = "Weight")
 ```
 
-Interpretation prompt:
+Questions:
 
 - What does one point represent?
 - Would swapping the order of the rows change the meaning?
@@ -36,7 +36,7 @@ plot.ts(gpa, type = "o", pch = 19, col = "firebrick",
         xlab = "Semester", ylab = "GPA")
 ```
 
-Interpretation prompt:
+Questions:
 
 - What does the line add that a scatterplot does not?
 - What pattern would be lost if the order were shuffled?
@@ -55,7 +55,7 @@ plot.ts(y, main = "Trend + seasonality + noise",
         ylab = "Observed value", xlab = "Time")
 ```
 
-Interpretation prompt:
+Questions:
 
 - Which part looks like trend?
 - Which part repeats?
@@ -69,7 +69,7 @@ d <- decompose(y_ts, type = "additive")
 plot(d)
 ```
 
-Live change:
+Try it:
 
 - Increase the noise standard deviation from `0.4` to `1.5`.
 - Rerun the plot and decomposition.
@@ -85,7 +85,7 @@ plot(log(AirPassengers), main = "Log AirPassengers",
      ylab = "log(Passengers)", xlab = "Year")
 ```
 
-Interpretation prompt:
+Questions:
 
 - Why does the seasonal variation grow over time in the original plot?
 - Why does the log transformation help?
@@ -103,7 +103,7 @@ head(AP)       # first 6 observations
 tail(AP)       # last 6 observations
 ```
 
-Interpretation prompt:
+Questions:
 
 - How does R know that the first value is January 1949?
 - What would `frequency()` be for quarterly data?
@@ -141,7 +141,7 @@ boxplot(AP_late ~ cycle(AP_late), main = "1958-1960",
 par(mfrow = c(1, 1))
 ```
 
-Interpretation prompt:
+Questions:
 
 - Which months are busiest? Is that the same early and late?
 - Has the size of the seasonal swing changed? What does that suggest about an
@@ -186,7 +186,7 @@ boxplot(drivers_late ~ cycle(drivers_late), main = "1979-1982",
 par(mfrow = c(1, 1))
 ```
 
-Interpretation prompt:
+Questions:
 
 - Which months have the most casualties, and why might that be?
 - What happens to the level after February 1983? Is that a trend, a season, or
@@ -216,7 +216,7 @@ par(mfrow = c(1, 1))
 aggregate(cbind(males = mdeaths, females = fdeaths, total = ldeaths))  # yearly totals
 ```
 
-Interpretation prompt:
+Questions:
 
 - Do the three series share the same seasonal pattern?
 - Is there a trend, or mainly seasonality?
@@ -243,7 +243,7 @@ abline(h = 0, lty = 2)
 par(mfrow = c(1, 1))
 ```
 
-Interpretation prompt:
+Questions:
 
 - Do the random walks look as if they had trends? Do they all go the same way?
 - What would we have to believe to extrapolate the Lake Huron line to 2030?
