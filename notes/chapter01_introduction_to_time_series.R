@@ -1,6 +1,6 @@
 # SCIM311 Chapter 1: R code of the chapter
 # Run from top to bottom to reproduce every figure in the chapter.
-# Part of the SCIM311 lecture notes (student version).
+# Part of the SCIM311 lecture notes.
 
 ## ----students-----------------------------------------------------------------
 students <- data.frame(
