@@ -3,7 +3,7 @@
 This repository contains the public website for Part II (Time Series) of SCIM311 Statistical Modelling.
 
 - `index.html`: Part II overview, learning outcomes, assessment, and Weeks 10–17 schedule
-- [Chapter 1: Introduction to Time Series](notes/chapter01_introduction_to_time_series.md): student lecture note, R code, figures, and a linked live demo
+- [Chapter 1: Introduction to Time Series](lecturenotes/chapter01_introduction_to_time_series.md): lecture note with figures and an in-class demo
 
 The course material source repository is [WJ-Mim/SCIM311-Statistical-Modelling](https://github.com/WJ-Mim/SCIM311-Statistical-Modelling).
 

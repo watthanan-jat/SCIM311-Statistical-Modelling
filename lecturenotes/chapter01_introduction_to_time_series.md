@@ -1,7 +1,6 @@
 # Chapter 1: Introduction to Time Series
 
-- [R code for this chapter](chapter01_introduction_to_time_series.R)
-- [In-class R demo](../live_demos/chapter01_live_demo.Rmd)
+- [In-class R demo](../demos/chapter01_in-class_demo.Rmd)
 
 ## 1. What is a time series?
 
@@ -52,7 +51,7 @@ plot(students$weight, students$gpa, pch = 19, col = "darkgreen",
 text(students$weight, students$gpa, students$student, pos = 3, cex = 0.7)
 ```
 
-![Cross-sectional data: ten students measured once.](figures/chapter01/cross-sectional-1.png)
+![Cross-sectional data: ten students measured once.](../figures/chapter01/cross-sectional-1.png)
 
 *Figure 1.1. Cross-sectional data: ten students measured once.*
 
@@ -88,7 +87,7 @@ plot(s1$semester, s1$gpa, type = "o", pch = 19, col = "blue",
      xlab = "Semester", ylab = "GPA")
 ```
 
-![Time series data: one student (S1) measured repeatedly.](figures/chapter01/time-series-1.png)
+![Time series data: one student (S1) measured repeatedly.](../figures/chapter01/time-series-1.png)
 
 *Figure 1.2. Time series data: one student (S1) measured repeatedly.*
 
@@ -178,7 +177,7 @@ legend("topleft", bty = "n", pch = c(19, NA), lty = c(NA, 1), lwd = c(NA, 2),
                           coef(fit_AB)[1], coef(fit_AB)[2])))
 ```
 
-![Regression method: sales of product B against purchases of product A (simulated).](figures/chapter01/regression-1.png)
+![Regression method: sales of product B against purchases of product A (simulated).](../figures/chapter01/regression-1.png)
 
 *Figure 1.3. Regression method: sales of product B against purchases of product A (simulated).*
 
@@ -247,7 +246,7 @@ plot(lh, type = "o", pch = 20, main = "Irregular fluctuation",
      xlab = "Sample (10-minute intervals)", ylab = "Hormone level")
 ```
 
-![Four series with different components. Data sets built into R: austres, co2, sunspot.year, lh.](figures/chapter01/components-1.png)
+![Four series with different components. Data sets built into R: austres, co2, sunspot.year, lh.](../figures/chapter01/components-1.png)
 
 *Figure 1.4. Four series with different components. Data sets built into R: austres, co2, sunspot.year, lh.*
 
@@ -291,7 +290,7 @@ plot(t, Y_mul, type = "l", col = "darkorange", lwd = 2,
      main = "Multiplicative model", xlab = "Time", ylab = "Y (multiplicative)")
 ```
 
-![The same trend and seasonal pattern combined additively and multiplicatively.](figures/chapter01/additive-multiplicative-1.png)
+![The same trend and seasonal pattern combined additively and multiplicatively.](../figures/chapter01/additive-multiplicative-1.png)
 
 *Figure 1.5. The same trend and seasonal pattern combined additively and multiplicatively.*
 
@@ -341,7 +340,7 @@ plot(ts(x), main = "IID noise: N(0, 1)", xlab = "t", ylab = expression(x[t]))
 abline(h = 0, col = "grey50", lty = 2)
 ```
 
-![Simulated iid N(0, 1) noise.](figures/chapter01/iid-noise-1.png)
+![Simulated iid N(0, 1) noise.](../figures/chapter01/iid-noise-1.png)
 
 *Figure 1.6. Simulated iid N(0, 1) noise.*
 
@@ -373,7 +372,7 @@ plot(ts(S), main = "Random walk", xlab = "t", ylab = expression(S[t]))
 abline(h = 0, col = "grey50", lty = 2)
 ```
 
-![A simulated random walk started at zero.](figures/chapter01/random-walk-1.png)
+![A simulated random walk started at zero.](../figures/chapter01/random-walk-1.png)
 
 *Figure 1.7. A simulated random walk started at zero.*
 
@@ -433,7 +432,7 @@ plot(1875:1972, level, type = "o", pch = 0,
 lines(1875:1972, fitted(fit_lake), lwd = 2)
 ```
 
-![Level of Lake Huron (feet above 570 ft) with the least-squares trend line.](figures/chapter01/lake-huron-1.png)
+![Level of Lake Huron (feet above 570 ft) with the least-squares trend line.](../figures/chapter01/lake-huron-1.png)
 
 *Figure 1.8. Level of Lake Huron (feet above 570 ft) with the least-squares trend line.*
 
@@ -464,7 +463,7 @@ matplot(walks, type = "l", lty = 1, lwd = 2,
 abline(h = 0, col = "grey50", lty = 2)
 ```
 
-![Three simulated realisations of the same random walk; each seems to have its own trend.](figures/chapter01/rw-three-trends-1.png)
+![Three simulated realisations of the same random walk; each seems to have its own trend.](../figures/chapter01/rw-three-trends-1.png)
 
 *Figure 1.9. Three simulated realisations of the same random walk; each seems to have its own trend.*
 
@@ -557,7 +556,7 @@ lines(t[show], fitted(fit_cos)[show], col = "red", lwd = 2)
 lines(t[show], fitted(fit_means)[show], col = "blue", lty = 2)
 ```
 
-![Monthly air temperature at Nottingham, 1920-1939 (first eight years shown), with the fitted cosine trend (red) and the seasonal means (blue).](figures/chapter01/nottem-trend-1.png)
+![Monthly air temperature at Nottingham, 1920-1939 (first eight years shown), with the fitted cosine trend (red) and the seasonal means (blue).](../figures/chapter01/nottem-trend-1.png)
 
 *Figure 1.10. Monthly air temperature at Nottingham, 1920-1939 (first eight years shown), with the fitted cosine trend (red) and the seasonal means (blue).*
 
@@ -618,7 +617,7 @@ plot(my_ts_data,
      xlab = "Year", ylab = "Passengers (1000s)")
 ```
 
-![Time plot of AirPassengers drawn with base R.](figures/chapter01/air-base-1.png)
+![Time plot of AirPassengers drawn with base R.](../figures/chapter01/air-base-1.png)
 
 *Figure 1.11. Time plot of AirPassengers drawn with base R.*
 <!-- /box -->
@@ -666,7 +665,7 @@ print(sales_ts)
 plot(sales_ts, main = "Monthly sales", xlab = "Year", ylab = "Sales")
 ```
 
-![Monthly sales, January 2020 to December 2022.](figures/chapter01/sales-ts-1.png)
+![Monthly sales, January 2020 to December 2022.](../figures/chapter01/sales-ts-1.png)
 
 *Figure 1.12. Monthly sales, January 2020 to December 2022.*
 <!-- /box -->
@@ -682,7 +681,7 @@ decomposed_sales_add <- decompose(sales_ts, type = "additive")
 plot(decomposed_sales_add)
 ```
 
-![Classical additive decomposition of the monthly sales.](figures/chapter01/decompose-1.png)
+![Classical additive decomposition of the monthly sales.](../figures/chapter01/decompose-1.png)
 
 *Figure 1.13. Classical additive decomposition of the monthly sales.*
 
@@ -703,7 +702,7 @@ stl_sales <- stl(sales_ts, s.window = "periodic")
 plot(stl_sales)
 ```
 
-![STL decomposition of the monthly sales.](figures/chapter01/stl-1.png)
+![STL decomposition of the monthly sales.](../figures/chapter01/stl-1.png)
 
 *Figure 1.14. STL decomposition of the monthly sales.*
 
@@ -826,7 +825,7 @@ abline(v = c(45, 49, 85), col = c("steelblue", "steelblue", "firebrick"),
        lty = 2)
 ```
 
-![A simulated sensor stream with a missing block (minutes 45-49) and a spike (minute 85).](figures/chapter01/sensor-stream-1.png)
+![A simulated sensor stream with a missing block (minutes 45-49) and a spike (minute 85).](../figures/chapter01/sensor-stream-1.png)
 
 *Figure 1.15. A simulated sensor stream with a missing block (minutes 45-49) and a spike (minute 85).*
 
