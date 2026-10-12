@@ -1,0 +1,305 @@
+---
+title: "Chapter 2 In-Class R Demo: Mean, Variance, and ACF"
+output: html_document
+---
+
+## Demo Goal
+
+You will see why time-series data need covariance and autocorrelation, not only mean and variance.
+
+Reference anchor: stationarity, autocovariance, and sample ACF ideas from the reference texts.
+
+```{r setup}
+set.seed(311)
+par(mfrow = c(1, 1))
+```
+
+## 1. Two Series with Similar Mean and Variance
+
+```{r compare-series}
+n <- 200
+white_noise <- rnorm(n)
+
+ar_series <- numeric(n)
+phi <- 0.8
+eps <- rnorm(n, sd = sqrt(1 - phi^2))  # Var(X_t) = 1, like the noise
+for (t in 2:n) {
+  ar_series[t] <- phi * ar_series[t - 1] + eps[t]
+}
+
+mean(white_noise)
+var(white_noise)
+mean(ar_series)
+var(ar_series)
+```
+
+```{r compare-plots}
+par(mfrow = c(2, 1))
+plot.ts(white_noise, main = "White noise", ylab = "X_t")
+plot.ts(ar_series, main = "Autocorrelated series", ylab = "X_t")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- If the mean and variance are not enough, what extra feature do we need?
+
+## 2. ACF as a Picture of Memory
+
+```{r acf-comparison}
+par(mfrow = c(1, 2))
+acf(white_noise, main = "ACF: white noise")
+acf(ar_series, main = "ACF: autocorrelated")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- Which series remembers its past?
+- How does the ACF show this?
+
+## 3. Manual Autocovariance
+
+```{r manual-acvf}
+sample_autocov <- function(x, h) {
+  xbar <- mean(x)
+  n <- length(x)
+  sum((x[(h + 1):n] - xbar) * (x[1:(n - h)] - xbar)) / n
+}
+
+gamma0 <- sample_autocov(ar_series, 0)
+gamma1 <- sample_autocov(ar_series, 1)
+rho1 <- gamma1 / gamma0
+
+c(gamma0 = gamma0, gamma1 = gamma1, rho1 = rho1)
+acf(ar_series, plot = FALSE)$acf[1:3]
+```
+
+Try it yourself:
+
+- Change `phi <- 0.8` to `phi <- -0.8`.
+- Rerun the plots and ACF.
+- Why does the series now alternate?
+
+## 4. ACF by Hand with Five Observations
+
+Start with a small series, so you can check every number by hand.
+
+```{r acf-by-hand-small}
+x_small <- c(4, 5, 6, 5, 4)
+xbar <- mean(x_small)
+deviation <- x_small - xbar
+
+data.frame(
+  t = seq_along(x_small),
+  x = x_small,
+  deviation = deviation
+)
+```
+
+The lag 0 autocovariance is the average squared deviation.
+
+```{r gamma0-small}
+gamma0_parts <- deviation * deviation
+gamma0 <- sum(gamma0_parts) / length(x_small)
+
+data.frame(part = gamma0_parts)
+gamma0
+```
+
+The lag 1 autocovariance compares each deviation with the previous deviation.
+
+```{r gamma1-small}
+lag1_parts <- deviation[2:5] * deviation[1:4]
+gamma1 <- sum(lag1_parts) / length(x_small)
+rho1 <- gamma1 / gamma0
+
+data.frame(
+  current_deviation = deviation[2:5],
+  previous_deviation = deviation[1:4],
+  product = lag1_parts
+)
+c(gamma1 = gamma1, rho1 = rho1)
+```
+
+The lag 2 autocovariance compares observations two periods apart.
+
+```{r gamma2-small}
+lag2_parts <- deviation[3:5] * deviation[1:3]
+gamma2 <- sum(lag2_parts) / length(x_small)
+rho2 <- gamma2 / gamma0
+
+data.frame(
+  current_deviation = deviation[3:5],
+  lag2_deviation = deviation[1:3],
+  product = lag2_parts
+)
+c(gamma2 = gamma2, rho2 = rho2)
+```
+
+Compare the hand calculation with R's built-in ACF.
+
+```{r compare-hand-to-r}
+acf(x_small, plot = FALSE)$acf[1:3]
+```
+
+Questions:
+
+- What does a positive product mean?
+- What does a negative product mean?
+- Why can lag 2 be negative even when lag 1 is near zero?
+
+## 5. Predict the ACF Before Plotting
+
+```{r predict-acf-activity}
+upward <- c(2, 3, 4, 5, 6)
+zigzag <- c(2, 6, 2, 6, 2)
+flat <- c(3, 3, 3, 3, 3)
+
+acf_by_hand <- function(x, max_lag = 4) {
+  xbar <- mean(x)
+  dev <- x - xbar
+  gamma0 <- sum(dev * dev) / length(x)
+  out <- data.frame(lag = 0:max_lag, gamma = NA_real_, rho = NA_real_)
+  for (h in 0:max_lag) {
+    products <- dev[(h + 1):length(x)] * dev[1:(length(x) - h)]
+    out$gamma[h + 1] <- sum(products) / length(x)
+    out$rho[h + 1] <- out$gamma[h + 1] / gamma0
+  }
+  out
+}
+
+acf_by_hand(upward)
+acf_by_hand(zigzag)
+```
+
+For `flat`, the ACF is not meaningful because there is no variation.
+
+```{r flat-case}
+var(flat)
+```
+
+## 6. Covariance and Correlation: Air Quality in New York
+
+The notes use the 26 complete days of May 1973 from the built-in `airquality`
+data. Here we use all complete days, May to September 1973 (ozone in ppb,
+solar radiation, wind speed in mph, temperature in degrees F).
+
+```{r air}
+air <- na.omit(airquality[, c("Ozone", "Solar.R", "Wind", "Temp")])
+head(air)
+summary(air)
+dim(air)
+```
+
+```{r air-scatter}
+plot(air$Wind, air$Ozone, pch = 19,
+     xlab = "Wind speed (mph)", ylab = "Ozone (ppb)",
+     main = "New York, May-September 1973: ozone vs wind")
+fit_a <- lm(Ozone ~ Wind, data = air)
+abline(fit_a, col = "grey40", lwd = 2)
+coef(fit_a)
+summary(fit_a)$r.squared
+```
+
+`cov()` and `cor()` use the divisor n - 1. Check them by hand.
+
+```{r air-cov}
+n <- nrow(air)
+dev_oz <- air$Ozone - mean(air$Ozone)
+dev_wd <- air$Wind - mean(air$Wind)
+
+c(cov_R = cov(air$Ozone, air$Wind),
+  cov_hand = sum(dev_oz * dev_wd) / (n - 1))
+c(cor_R = cor(air$Ozone, air$Wind),
+  cor_hand = sum(dev_oz * dev_wd) / sqrt(sum(dev_oz^2) * sum(dev_wd^2)))
+
+round(cor(air), 2)
+pairs(air, main = "Air quality: scatterplot matrix")
+```
+
+Questions:
+
+- Is the linear association between ozone and wind strong or weak? Which
+  points drive it? Compare with the May-only value in the notes.
+- Why is the squared correlation equal to the R-squared of the fitted line?
+- Do the divisors n and n - 1 change the correlation? Why not?
+- The observations are consecutive days. Why might that matter when we judge
+  whether a correlation is "significant" (Chapter 2, Section 2.4)?
+
+## 7. Lag Scatterplots and the ACF: Wave Heights
+
+The simulated wave heights of the wave-height example in the notes (396
+readings in mm).
+A lag-k scatterplot plots each value against the value k steps later.
+
+```{r wave}
+set.seed(311)
+wave <- round(arima.sim(model = list(ar = c(0.8, -0.6)), n = 396, sd = 200))
+summary(as.numeric(wave))
+plot(wave, main = "Wave heights (simulated)",
+     xlab = "Time", ylab = "Wave height (mm)")
+```
+
+```{r wave-lags, fig.height = 4.5}
+n <- length(wave)
+par(mfrow = c(1, 2))
+plot(wave[1:(n - 1)], wave[2:n], pch = 19, cex = 0.5,
+     main = "Lag 1", xlab = expression(x[t]), ylab = expression(x[t + 1]))
+fit_lag1 <- lm(wave[2:n] ~ wave[1:(n - 1)])
+abline(fit_lag1, col = "grey40", lwd = 2)
+plot(wave[1:(n - 3)], wave[4:n], pch = 19, cex = 0.5,
+     main = "Lag 3", xlab = expression(x[t]), ylab = expression(x[t + 3]))
+par(mfrow = c(1, 1))
+
+coef(fit_lag1)[2]                    # slope of the lag-1 line
+acf(wave, plot = FALSE)$acf[2]       # sample ACF at lag 1
+```
+
+```{r wave-acf}
+acf_wave <- acf(wave, main = "Sample ACF of the wave heights")
+round(acf_wave$acf[2:11], 3)         # lags 1 to 10
+
+rho1 <- acf_wave$acf[2]
+bound <- 1.96 / sqrt(length(wave))
+cat(sprintf("Lag-1 ACF: %.3f; 95%% bounds: +/-%.4f; the value lies %s.\n",
+            rho1, bound, if (abs(rho1) > bound) "outside" else "inside"))
+```
+
+Questions:
+
+- Why is the slope of the lag-1 line close to the lag-1 sample ACF?
+- What does the lag-3 scatterplot show, and how does it match the ACF at lag 3?
+- How many lags fall outside the bounds? Would you expect any for iid white noise?
+
+Try it yourself:
+
+- Run `lag.plot(wave, lags = 4)` to see lags 1 to 4 at once.
+- Replace `wave` by `LakeHuron` or `lh` and compare the lag plots and ACF.
+
+## 8. The ACF of Nonstationary Series
+
+A random walk $X_t = X_{t-1} + \epsilon_t$ and the `AirPassengers` series of
+the notes. The sample ACF can be computed for any data, but here it does not
+estimate the ACF of a stationary process.
+
+```{r nonstationary-acf, fig.height = 7}
+rw <- cumsum(rnorm(200))               # random walk with X_0 = 0
+par(mfrow = c(2, 2))
+plot.ts(rw, main = "Random walk", ylab = "X_t")
+acf(rw, lag.max = 40, main = "ACF: random walk")
+plot(AirPassengers, main = "AirPassengers", ylab = "Passengers (1000s)")
+acf(as.numeric(AirPassengers), lag.max = 40, main = "ACF: AirPassengers",
+    xlab = "Lag (months)")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- Why does the random-walk sample ACF start near 1 and decay almost linearly,
+  although $\text{E}(X_t) = 0$ for every $t$?
+- At which lags does the `AirPassengers` ACF have local peaks, and why?
+
+Try it yourself:
+
+- Run `acf(diff(rw))`. What do the differences look like?
