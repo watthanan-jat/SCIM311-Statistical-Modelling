@@ -756,10 +756,6 @@ on the task.
 | Imputation | Which values are missing? | Estimated entries $\hat X_t$ | Interpolation, SAITS |
 | Clustering | Which sequences behave similarly? | Cluster or learned representation | Distance- or representation-based clustering |
 
-The first chapter of *AI for Time Series* organises modern work around
-forecasting, classification, anomaly detection, imputation and clustering. This
-wider map helps to avoid a common mistake: choosing a forecasting model when the
-real problem is fault detection or data repair.
 
 ### Model idea: a shared representation, task-specific output
 
@@ -793,8 +789,8 @@ minute.
 The observations are the same, but the statistical question changes, and so the
 train/test split and the evaluation measure must change too.
 
-**In-class activity: task-framing clinic (25 minutes).** Work in groups of
-three. For each request below, identify the task, the model input, the desired
+**Task-framing clinic.** 
+For each request below, identify the task, the model input, the desired
 output, and one way to evaluate success.
 
 1. Predict tomorrow's peak electricity demand.
@@ -830,11 +826,3 @@ abline(v = c(45, 49, 85), col = c("steelblue", "steelblue", "firebrick"),
 *Figure 1.15. A simulated sensor stream with a missing block (minutes 45-49) and a spike (minute 85).*
 
 
-
-<!-- box: reading -->
-**Modern reading**
-
-*AI for Time Series*, Chapter 1, especially the task taxonomy, the benchmark
-data sets, and the overview of recurrent, convolutional, attention-based and
-graph-based models.
-<!-- /box -->
