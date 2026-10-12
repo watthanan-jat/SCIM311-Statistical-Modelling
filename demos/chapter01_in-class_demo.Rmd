@@ -5,9 +5,9 @@ output: html_document
 
 ## Demo Goal
 
-Use real and simulated series to show why time order matters.
+You will use real and simulated series to see why time order matters.
 
-Reference anchor: introductory time-series examples and decomposition ideas from Brockwell-Davis, Cryer-Chan, and Shumway-Stoffer.
+Reference anchor: introductory time-series examples and decomposition ideas from Brockwell–Davis, Cryer–Chan, and Shumway–Stoffer.
 
 ```{r setup}
 set.seed(311)
@@ -69,11 +69,11 @@ d <- decompose(y_ts, type = "additive")
 plot(d)
 ```
 
-Try it:
+Try it yourself:
 
 - Increase the noise standard deviation from `0.4` to `1.5`.
 - Rerun the plot and decomposition.
-- Ask whether the trend and seasonality are still easy to see.
+- Can you still see the trend and seasonality easily?
 - Replace `decompose()` by `stl(y_ts, s.window = "periodic")` and compare.
 
 ## 4. Built-In Data: AirPassengers
@@ -224,8 +224,9 @@ Questions:
 ## 9. Deterministic and Stochastic Trends
 
 A least-squares line for `LakeHuron` (a deterministic trend, as in the
-notes), next to three random walks $S_t = S_{t-1} + X_t$ with iid $N(0, 1)$
-steps, which have mean $0$ for every $t$.
+notes), next to three random walks $X_t = X_{t-1} + \epsilon_t$, $X_0 = 0$, with
+Gaussian iid white noise $\epsilon_t \sim N(0, 1)$ as steps, which have mean $0$
+for every $t$.
 
 ```{r trends, fig.height = 7}
 t <- seq_along(LakeHuron)
@@ -238,7 +239,7 @@ plot(as.numeric(LakeHuron), type = "o", pch = 20, main = "Lake Huron level",
      xlab = "t (1 = 1875)", ylab = "Level (feet)")
 abline(fit_lake, col = "firebrick", lwd = 2)
 matplot(walks, type = "l", lty = 1, main = "Three random walks",
-        xlab = "t", ylab = "S_t")
+        xlab = "t", ylab = "X_t")
 abline(h = 0, lty = 2)
 par(mfrow = c(1, 1))
 ```

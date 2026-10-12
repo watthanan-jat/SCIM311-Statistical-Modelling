@@ -315,9 +315,9 @@ linear dependence and to build forecasting models.
 
 ### 3.1 Zero-mean models
 
-**IID noise.** The simplest time series model has no trend or seasonality, and
-the observations $X_t$ are **independent and identically distributed (iid)**
-with mean $0$. Formally,
+**iid noise (iid white noise).** The simplest time series model has no trend
+or seasonality, and the observations $X_t$ are **independent and identically
+distributed (iid)** with mean $0$. Formally,
 
 ```math
 \Pr(X_1 \le x_1, \dots, X_n \le x_n) = \prod_{i=1}^n F(x_i),
@@ -354,21 +354,22 @@ For $p = 0.5$ this describes tosses of a fair coin ($+1$ for heads, $-1$ for
 tails). Although simple, it can model two-state processes such as wins and
 losses in a sports season.
 
-**Random walk.** The random walk is the cumulative sum of iid noise,
+**Random walk.** The random walk is the cumulative sum of iid noise
+$\epsilon_t$,
 
 ```math
-S_t = X_1 + X_2 + \cdots + X_t ,
+X_t = \epsilon_1 + \epsilon_2 + \cdots + \epsilon_t ,
 ```
 
-or, recursively, $S_t = S_{t-1} + X_t$ with $S_0 = 0$.
+or, recursively, $X_t = X_{t-1} + \epsilon_t$ with $X_0 = 0$.
 
 
 ```r
 set.seed(2)
 n <- 200
 eps <- rnorm(n, mean = 0, sd = 1)
-S <- cumsum(eps)  # random walk: S_t = S_{t-1} + eps_t
-plot(ts(S), main = "Random walk", xlab = "t", ylab = expression(S[t]))
+S <- cumsum(eps)  # random walk: X_t = X_{t-1} + eps_t
+plot(ts(S), main = "Random walk", xlab = "t", ylab = expression(X[t]))
 abline(h = 0, col = "grey50", lty = 2)
 ```
 
@@ -376,7 +377,7 @@ abline(h = 0, col = "grey50", lty = 2)
 
 *Figure 1.7. A simulated random walk started at zero.*
 
-> **Question.** What are the mean and variance of $S_t$?
+> **Question.** What are the mean and variance of $X_t$?
 
 
 
@@ -386,18 +387,18 @@ Many real series have **deterministic components** such as a trend or a
 periodic pattern. We can represent such data as
 
 ```math
-X_t = m_t + Y_t ,
+X_t = \mu_t + Y_t ,
 ```
 
-where $m_t$ is a deterministic **trend** and $Y_t$ is a stochastic component with
+where $\mu_t$ is a deterministic **trend** and $Y_t$ is a stochastic component with
 zero mean. A **polynomial trend** has the form
 
 ```math
-m_t = a_0 + a_1 t + a_2 t^2 + \cdots + a_k t^k ,
+\mu_t = \beta_0 + \beta_1 t + \beta_2 t^2 + \cdots + \beta_k t^k ,
 ```
 
-and the parameters $a_0, a_1, \dots, a_k$ are usually estimated by **least
-squares**.
+and the parameters $\beta_0, \beta_1, \dots, \beta_k$ are usually estimated by
+**least squares**.
 
 <!-- box: example -->
 **Example: Level of Lake Huron, 1875–1972**
@@ -407,7 +408,7 @@ feet. We measure the level in feet above 570 ft and number the years
 $t = 1, \dots, 98$. The level declines roughly linearly over time, so we fit
 
 ```math
-X_t = a_0 + a_1 t + Y_t , \qquad t = 1, \dots, 98 ,
+X_t = \beta_0 + \beta_1 t + Y_t , \qquad t = 1, \dots, 98 ,
 ```
 
 where $Y_t$ is the stochastic (noise) component.
@@ -436,8 +437,8 @@ lines(1875:1972, fitted(fit_lake), lwd = 2)
 
 *Figure 1.8. Level of Lake Huron (feet above 570 ft) with the least-squares trend line.*
 
-The least-squares estimates are $\hat{a}_0 = 10.202$ and
-$\hat{a}_1 = -0.0242$, so the fitted trend line is
+The least-squares estimates are $\hat{\beta}_0 = 10.202$ and
+$\hat{\beta}_1 = -0.0242$, so the fitted trend line is
 
 ```math
 \hat{X}_t = 10.202 - 0.0242\,t .
@@ -449,7 +450,7 @@ $\hat{a}_1 = -0.0242$, so the fitted trend line is
 A trend seen in a plot need not be deterministic. The random walk of
 Section 3.1 has mean $0$ for all $t$, yet a single realisation often drifts
 steadily up or down, because neighbouring values are strongly correlated and
-the variance of $S_t$ grows with $t$. Three realisations of the *same*
+the variance of $X_t$ grows with $t$. Three realisations of the *same*
 process can show quite different "trends":
 
 
@@ -459,7 +460,7 @@ walks <- replicate(3, cumsum(rnorm(60)))   # three random walks, t = 1..60
 matplot(walks, type = "l", lty = 1, lwd = 2,
         col = c("black", "steelblue", "firebrick"),
         main = "Three realisations of one random walk",
-        xlab = "t", ylab = expression(S[t]))
+        xlab = "t", ylab = expression(X[t]))
 abline(h = 0, col = "grey50", lty = 2)
 ```
 
@@ -468,47 +469,47 @@ abline(h = 0, col = "grey50", lty = 2)
 *Figure 1.9. Three simulated realisations of the same random walk; each seems to have its own trend.*
 
 Such apparent trends are sometimes called **stochastic trends**. A
-**deterministic trend**, such as $m_t = a_0 + a_1 t$ in the model
-$X_t = m_t + Y_t$, is different: it is part of the mean function and is assumed
+**deterministic trend**, such as $\mu_t = \beta_0 + \beta_1 t$ in the model
+$X_t = \mu_t + Y_t$, is different: it is part of the mean function and is assumed
 to hold for all time, not only over the observed period. We should have a
 reason for such an assumption beyond the series looking roughly linear.
 
-**Removing a trend.** Suppose $X_t = m_t + Y_t$ with $Y_t$ stationary
+**Removing a trend.** Suppose $X_t = \mu_t + Y_t$ with $Y_t$ stationary
 (Chapter 2). There are two standard ways to remove the trend. **Detrending**
-estimates $m_t$ by regression, as for Lake Huron, and works with the residuals
-$\hat Y_t = X_t - \hat m_t$. **Differencing** works with $X_t - X_{t-1}$. For a
-linear trend $m_t = a_0 + a_1 t$,
+estimates $\mu_t$ by regression, as for Lake Huron, and works with the residuals
+$\hat Y_t = X_t - \hat \mu_t$. **Differencing** works with $X_t - X_{t-1}$. For a
+linear trend $\mu_t = \beta_0 + \beta_1 t$,
 
 ```math
-X_t - X_{t-1} = a_1 + Y_t - Y_{t-1},
+X_t - X_{t-1} = \beta_1 + Y_t - Y_{t-1},
 ```
 
-and for a stochastic trend $m_t = \delta + m_{t-1} + w_t$ (a random walk with
-drift $\delta$, where $w_t$ is iid noise independent of $Y_t$),
+and for a stochastic trend $\mu_t = \delta + \mu_{t-1} + \epsilon_t$ (a random walk
+with drift $\delta$, where $\epsilon_t$ is iid noise independent of $Y_t$),
 
 ```math
-X_t - X_{t-1} = \delta + w_t + Y_t - Y_{t-1}.
+X_t - X_{t-1} = \delta + \epsilon_t + Y_t - Y_{t-1}.
 ```
 
 In both cases the differenced series is stationary. Differencing estimates no
 parameters, but it does not recover $Y_t$; detrending gives an estimate of
 $Y_t$, but only makes sense if the trend really is deterministic. Chapter 6
 studies differencing (and the harm done by differencing too often), and the
-augmented Dickey-Fuller test of Chapter 7 helps to decide between a
+augmented Dickey–Fuller test of Chapter 7 helps to decide between a
 deterministic trend with stationary deviations and a unit root.
 
 **Seasonal deterministic trends.** For monthly data a deterministic seasonal
-mean satisfies $m_t = m_{t-12}$. The most general form is the **seasonal means
+mean satisfies $\mu_t = \mu_{t-12}$. The most general form is the **seasonal means
 model**, with one parameter per month,
 
 ```math
-m_t = \beta_j \quad \text{when } t \text{ falls in month } j, \qquad j = 1, \dots, 12 .
+\mu_t = \beta_j \quad \text{when } t \text{ falls in month } j, \qquad j = 1, \dots, 12 .
 ```
 
 A more economical **cosine (harmonic) trend** describes a smooth annual cycle,
 
 ```math
-m_t = \beta_0 + \beta_1 \cos(2\pi f t) + \beta_2 \sin(2\pi f t),
+\mu_t = \beta_0 + \beta_1 \cos(2\pi f t) + \beta_2 \sin(2\pi f t),
 ```
 
 where $f$ is the frequency: $f = 1/12$ if $t$ counts months, $f = 1$ if $t$ is
@@ -722,7 +723,7 @@ Before moving on, make sure you can answer these questions in words.
 5. Why can a random walk look as if it had a trend, and what does a
    deterministic trend assume that a stochastic trend does not?
 
-Short in-class task: choose one real example, such as monthly sales, daily
+Try this: choose one real example, such as monthly sales, daily
 temperature, exchange rates or weekly website visits. State the time unit, the
 observed variable, and one question a time series model could help answer.
 
@@ -756,6 +757,10 @@ on the task.
 | Imputation | Which values are missing? | Estimated entries $\hat X_t$ | Interpolation, SAITS |
 | Clustering | Which sequences behave similarly? | Cluster or learned representation | Distance- or representation-based clustering |
 
+Modern work can be organised around forecasting, classification, anomaly
+detection, imputation and clustering. This
+wider map helps to avoid a common mistake: choosing a forecasting model when the
+real problem is fault detection or data repair.
 
 ### Model idea: a shared representation, task-specific output
 
@@ -789,9 +794,8 @@ minute.
 The observations are the same, but the statistical question changes, and so the
 train/test split and the evaluation measure must change too.
 
-**Task-framing clinic.** 
-For each request below, identify the task, the model input, the desired
-output, and one way to evaluate success.
+**Activity: task-framing clinic.** For each request below, identify the task,
+the model input, the desired output, and one way to evaluate success.
 
 1. Predict tomorrow's peak electricity demand.
 2. Decide whether a 30-second ECG segment shows a normal or abnormal rhythm.
@@ -826,3 +830,5 @@ abline(v = c(45, 49, 85), col = c("steelblue", "steelblue", "firebrick"),
 *Figure 1.15. A simulated sensor stream with a missing block (minutes 45-49) and a spike (minute 85).*
 
 
+
+*Source:* M. Wu et al. (eds), *AI for Time Series, Volume 1*, CRC Press, 2026, Chapter 1, "Introduction" (Min Wu, Emadeldeen Eldele, Zhenghua Chen, Xiaoli Li, Shirui Pan and Qingsong Wen).
