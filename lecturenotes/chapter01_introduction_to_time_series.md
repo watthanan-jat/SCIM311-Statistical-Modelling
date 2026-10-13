@@ -1,6 +1,6 @@
 # Chapter 1: Introduction to Time Series
 
-- [In-class R demo](../demos/chapter01_in-class_demo.Rmd)
+- [In-class R demo](https://watthanan-jat.github.io/SCIM311-Statistical-Modelling/demos/chapter01_in-class_demo.html)
 
 ## 1. What is a time series?
 

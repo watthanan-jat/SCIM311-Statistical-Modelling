@@ -1,6 +1,6 @@
 # Chapter 2: Fundamental Concepts
 
-- [In-class R demo](../demos/chapter02_in-class_demo.Rmd)
+- [In-class R demo](https://watthanan-jat.github.io/SCIM311-Statistical-Modelling/demos/chapter02_in-class_demo.html)
 
 ## 1. Moments in time
 
