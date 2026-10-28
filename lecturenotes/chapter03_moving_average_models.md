@@ -876,4 +876,3 @@ $0, 0, -3, 0, 6, 0, -3, 0$.
 
 </details>
 
-*Source:* M. Wu et al. (eds), *AI for Time Series, Volume 1*, CRC Press, 2026, Chapter 1, "Introduction" (Min Wu, Emadeldeen Eldele, Zhenghua Chen, Xiaoli Li, Shirui Pan and Qingsong Wen).
