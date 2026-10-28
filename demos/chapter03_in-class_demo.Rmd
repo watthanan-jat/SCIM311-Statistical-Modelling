@@ -1,0 +1,103 @@
+---
+title: "Chapter 3 In-Class R Demo: Moving-Average Models"
+output: html_document
+---
+
+## Demo Goal
+
+You will see that an MA model has short memory because only recent white noise terms matter.
+
+Reference anchor: MA processes, invertibility intuition, and ACF cut-off behaviour.
+
+```{r setup}
+set.seed(311)
+par(mfrow = c(1, 1))
+```
+
+## 1. Manual MA(1)
+
+We simulate $X_t = \epsilon_t - \theta\epsilon_{t-1}$ with $\theta = 0.7$,
+written with a minus sign as in the notes.
+
+```{r manual-ma1}
+n <- 250
+theta <- 0.7
+eps <- rnorm(n + 1)
+x <- eps[2:(n + 1)] - theta * eps[1:n]
+
+plot.ts(x, main = "Manual MA(1)", ylab = "X_t")
+acf(x, main = "ACF of MA(1)")
+```
+
+Questions:
+
+- Why does the ACF cut off after lag 1?
+- What does this say about memory?
+
+## 2. Try Different MA Coefficients
+
+```{r compare-ma1}
+theta_values <- c(-0.8, 0.0, 0.8)
+par(mfrow = c(3, 2))
+for (theta in theta_values) {
+  eps <- rnorm(n + 1)
+  x <- eps[2:(n + 1)] - theta * eps[1:n]
+  plot.ts(x, main = paste("MA(1), theta =", theta), ylab = "X_t")
+  acf(x, main = "ACF")
+}
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- How does the sign of $\theta$ affect the lag-1 correlation? Compare with
+  $\rho_1 = -\theta/(1 + \theta^2)$.
+
+## 3. Fit an MA(1)
+
+R writes the MA term with a plus sign, so $\theta = 0.6$ is entered as
+`ma = -0.6`, and the reported `ma1` estimates $-\theta$.
+
+```{r fit-ma1}
+x <- arima.sim(model = list(ma = -0.6), n = 250)   # theta = 0.6
+fit <- arima(x, order = c(0, 0, 1))
+fit
+-coef(fit)["ma1"]                 # theta_hat in our convention
+acf(residuals(fit), main = "Residual ACF")
+Box.test(residuals(fit), lag = 12, type = "Ljung-Box", fitdf = 1)
+c(MA1 = AIC(fit), MA2 = AIC(arima(x, order = c(0, 0, 2))))
+```
+
+Questions:
+
+- Is $\hat\theta$ close to $0.6$? Why does `ma1` have the opposite sign?
+- Why is `fitdf = 1`, and what does the Ljung–Box p-value say?
+- Which model has the smaller AIC?
+
+Try it yourself:
+
+- Simulate an MA(2), then fit MA(1).
+- What happens to the residual ACF?
+
+## 4. Theoretical ACF and MA Bounds: MA(2)
+
+The MA(2) of the notes, $X_t = \epsilon_t - 0.5\epsilon_{t-1} - 0.2\epsilon_{t-2}$.
+`ARMAacf()` gives the theoretical ACF (red points); `ci.type = "ma"` draws the
+wider bounds for judging an MA cut-off.
+
+```{r ma2, fig.height = 4}
+theta2 <- c(0.5, 0.2)
+x2 <- arima.sim(model = list(ma = -theta2), n = 250)
+round(ARMAacf(ma = -theta2, lag.max = 4), 3)
+
+par(mfrow = c(1, 2))
+acf(x2, main = "White-noise bounds")
+points(0:20, ARMAacf(ma = -theta2, lag.max = 20), col = "red", pch = 19)
+acf(x2, ci.type = "ma", main = "MA bounds")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- Where does the theoretical ACF cut off? Does the sample ACF agree?
+- Why do the MA bounds widen with the lag?
