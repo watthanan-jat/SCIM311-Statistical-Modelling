@@ -1,0 +1,249 @@
+---
+title: "Chapter 4 In-Class R Demo: Autoregressive Models"
+output: html_document
+---
+
+## Demo Goal
+
+You will see that AR models create persistence because the present depends on the past.
+
+Reference anchor: AR stationarity, ACF decay, PACF cut-off.
+
+```{r setup}
+set.seed(311)
+par(mfrow = c(1, 1))
+```
+
+## 1. AR(1) Persistence
+
+```{r ar1}
+phi <- 0.8
+x <- arima.sim(model = list(ar = phi), n = 250)
+plot.ts(x, main = paste("AR(1), phi =", phi), ylab = "X_t")
+acf(x, main = "ACF of AR(1)")
+pacf(x, main = "PACF of AR(1)")
+```
+
+Questions:
+
+- Why does the ACF decay geometrically?
+- Why does the PACF cut off after lag 1?
+
+## 2. Parameter Experiment
+
+```{r ar1-compare}
+phis <- c(-0.8, 0.2, 0.8, 0.98)
+par(mfrow = c(4, 2))
+for (phi in phis) {
+  x <- arima.sim(model = list(ar = phi), n = 250)
+  plot.ts(x, main = paste("AR(1), phi =", phi), ylab = "X_t")
+  acf(x, main = "ACF")
+}
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- Which value creates slow forgetting?
+- Which value creates alternating behaviour?
+
+## 3. PACF as Direct Memory
+
+For lag 2, the PACF removes the part of the lag 2 relationship that can already be explained by lag 1.
+
+```{r pacf-lag2-by-hand}
+pacf_lag2 <- function(rho1, rho2) {
+  (rho2 - rho1^2) / (1 - rho1^2)
+}
+
+case_indirect <- pacf_lag2(rho1 = 0.8, rho2 = 0.64)
+case_direct <- pacf_lag2(rho1 = 0.3, rho2 = 0.5)
+
+c(
+  indirect_lag2_memory = case_indirect,
+  direct_lag2_memory = case_direct
+)
+```
+
+Questions:
+
+- In the first case, why is PACF lag 2 equal to zero?
+- In the second case, why might AR(2) be worth trying?
+
+Compare with a simulated AR(1) series.
+
+```{r pacf-ar1-values}
+x_ar1 <- arima.sim(model = list(ar = 0.8), n = 500)
+acf_values <- acf(x_ar1, plot = FALSE)$acf[1:4]
+pacf_values <- pacf(x_ar1, plot = FALSE)$acf[1:3]
+
+data.frame(
+  lag = 1:3,
+  acf = round(acf_values[2:4], 3),
+  pacf = round(pacf_values, 3)
+)
+```
+
+The ACF still shows lag 2 and lag 3 correlation, but the PACF should be much smaller after lag 1.
+
+### What the Lag-2 PACF Measures
+
+For the AR(1) with $\phi = 0.8$, $\rho(2) = 0.64$ but $\phi_{22} = 0$.
+$X_{t-2}$ is related to $X_t$ only through $X_{t-1}$. To see this, remove the
+linear effect of $X_{t-1}$ from both $X_t$ and $X_{t-2}$ by least squares,
+
+$$
+U_t = X_t - \hat a - \hat b X_{t-1}, \qquad
+V_t = X_{t-2} - \hat c - \hat d X_{t-1},
+$$
+
+and correlate what is left: $\phi_{22} = \operatorname{Corr}(U_t, V_t)$.
+This is not $\rho(2) - \rho(1)$: both variables are adjusted before the
+correlation is taken.
+
+```{r pacf-residuals-function}
+pacf2_by_regression <- function(x, label) {
+  x <- as.numeric(x)
+  n <- length(x)
+  d <- data.frame(xt  = x[3:n],         # X_t
+                  xt1 = x[2:(n - 1)],   # X_{t-1}
+                  xt2 = x[1:(n - 2)])   # X_{t-2}
+
+  fit_u <- lm(xt ~ xt1, data = d)       # X_t explained by X_{t-1}
+  fit_v <- lm(xt2 ~ xt1, data = d)      # X_{t-2} explained by X_{t-1}
+  d$u <- residuals(fit_u)               # what X_{t-1} cannot explain in X_t
+  d$v <- residuals(fit_v)               # ... and in X_{t-2}
+
+  r_acf  <- cor(d$xt, d$xt2)
+  r_pacf <- cor(d$u, d$v)
+  pts <- rgb(0, 0, 1, 0.2)
+
+  par(mfrow = c(2, 2))
+  plot(d$xt2, d$xt, pch = 16, col = pts, xlab = "X_(t-2)", ylab = "X_t",
+       main = paste0(label, ": X_t vs X_(t-2), r = ", round(r_acf, 3)))
+  abline(lm(xt ~ xt2, data = d), col = "red", lwd = 2)
+  plot(d$xt1, d$xt, pch = 16, col = pts, xlab = "X_(t-1)", ylab = "X_t",
+       main = "Step 1: X_t on X_(t-1)")
+  abline(fit_u, col = "red", lwd = 2)
+  plot(d$xt1, d$xt2, pch = 16, col = pts, xlab = "X_(t-1)", ylab = "X_(t-2)",
+       main = "Step 2: X_(t-2) on X_(t-1)")
+  abline(fit_v, col = "red", lwd = 2)
+  plot(d$v, d$u, pch = 16, col = rgb(0, 0.5, 0, 0.2),
+       xlab = "V (residual of X_(t-2))", ylab = "U (residual of X_t)",
+       main = paste0("Residuals: r = ", round(r_pacf, 3)))
+  abline(lm(u ~ v, data = d), col = "red", lwd = 2)
+  par(mfrow = c(1, 1))
+
+  round(c(
+    acf2_from_pairs     = r_acf,
+    acf2_from_acf       = acf(x, plot = FALSE)$acf[3],
+    pacf2_from_resid    = r_pacf,
+    pacf2_from_pacf     = pacf(x, plot = FALSE)$acf[2],
+    coef_xt2_in_ar2_fit = unname(coef(lm(xt ~ xt1 + xt2, data = d))["xt2"])
+  ), 3)
+}
+```
+
+```{r pacf-residuals-ar1, fig.height = 7}
+x_ar1 <- arima.sim(model = list(ar = 0.8), n = 1000)
+pacf2_by_regression(x_ar1, "AR(1)")
+```
+
+`pacf()` computes the same quantity from the sample ACF (Durbin–Levinson
+recursion), so the two values agree closely but not exactly. The slope of the
+red line in the residual plot equals the coefficient of $X_{t-2}$ when $X_t$
+is regressed on both $X_{t-1}$ and $X_{t-2}$: the lag-2 PACF is the last
+coefficient of a fitted AR(2).
+
+Questions:
+
+- In the first plot, $X_{t-2}$ clearly helps to predict $X_t$. Why?
+- Why do we remove $X_{t-1}$ from both $X_t$ and $X_{t-2}$, not only from
+  $X_t$?
+- Once you know $X_{t-1}$, does $X_{t-2}$ tell you anything more about $X_t$?
+
+Now an AR(2), $X_t = 0.6X_{t-1} + 0.2X_{t-2} + \epsilon_t$, which has almost
+the same lag-2 autocorrelation.
+
+```{r pacf-residuals-ar2, fig.height = 7}
+x_ar2 <- arima.sim(model = list(ar = c(0.6, 0.2)), n = 1000)
+pacf2_by_regression(x_ar2, "AR(2)")
+
+# Theoretical values
+data.frame(
+  model = c("AR(1), phi = 0.8", "AR(2), phi = (0.6, 0.2)"),
+  acf2  = c(ARMAacf(ar = 0.8, lag.max = 2)[3],
+            ARMAacf(ar = c(0.6, 0.2), lag.max = 2)[3]),
+  pacf2 = c(ARMAacf(ar = 0.8, lag.max = 2, pacf = TRUE)[2],
+            ARMAacf(ar = c(0.6, 0.2), lag.max = 2, pacf = TRUE)[2]),
+  row.names = NULL
+)
+```
+
+Questions:
+
+- The two models have $\rho(2) = 0.64$ and $0.65$. Which plot tells them
+  apart?
+- Why is $\phi_{22} = \phi_2 = 0.2$ for this AR(2)?
+- The sample ACF at lag 2 can differ from $0.64$ or $0.65$ by several
+  hundredths. Why is it hard to tell the two models apart from the ACF alone?
+
+Try it yourself:
+
+- Change $\phi_2$ to $0$ or $-0.3$ (keep $\phi_1 = 0.6$) and rerun. How do
+  the first and last plots change?
+
+## 4. AR(2) Oscillation
+
+```{r ar2}
+x <- arima.sim(model = list(ar = c(1.3, -0.5)), n = 250)
+plot.ts(x, main = "AR(2) with damped oscillation", ylab = "X_t")
+acf(x, main = "ACF of AR(2)")
+pacf(x, main = "PACF of AR(2)")
+```
+
+Try it yourself:
+
+- Change the AR coefficients.
+- When does the series become unstable or start to explode?
+
+`arima.sim()` refuses non-stationary coefficients, so check the roots of
+$\phi(z) = 1 - \phi_1 z - \phi_2 z^2$ first and use `filter()` to see what
+happens outside the stationarity triangle.
+
+```{r ar2-roots}
+Mod(polyroot(c(1, -1.3, 0.5)))   # both > 1: stationary
+Mod(polyroot(c(1, -0.5, -0.6)))  # one < 1: not stationary
+
+# X_t = 0.5 X_{t-1} + 0.6 X_{t-2} + eps_t, started at zero
+x_bad <- filter(rnorm(100), c(0.5, 0.6), method = "recursive")
+plot.ts(x_bad, main = "phi1 = 0.5, phi2 = 0.6 (explosive)", ylab = "X_t")
+```
+
+## 5. Fitting and Forecasting: Lake Huron
+
+The notes fit an AR(2) to the annual level of Lake Huron (`LakeHuron`, feet).
+
+```{r huron}
+acf(LakeHuron, main = "ACF of LakeHuron")
+pacf(LakeHuron, main = "PACF of LakeHuron")
+
+fit <- arima(LakeHuron, order = c(2, 0, 0))
+fit                               # 'intercept' is the mean mu
+Box.test(residuals(fit), lag = 12, type = "Ljung-Box", fitdf = 2)
+
+fc <- predict(fit, n.ahead = 8)
+plot(LakeHuron, xlim = c(1875, 1981),
+     ylim = range(LakeHuron, fc$pred + 1.96 * fc$se, fc$pred - 1.96 * fc$se),
+     main = "AR(2) forecasts", ylab = "Level (feet)")
+lines(fc$pred, col = "red", lwd = 2)
+lines(fc$pred + 1.96 * fc$se, col = "blue", lty = 2)
+lines(fc$pred - 1.96 * fc$se, col = "blue", lty = 2)
+```
+
+Questions:
+
+- Which features of the ACF and PACF point to an AR(2)?
+- Why is `fitdf = 2` used in the Ljung–Box test?
+- Where do the forecasts go as the horizon grows, and why do the intervals
+  stop widening?
