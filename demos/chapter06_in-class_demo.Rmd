@@ -1,0 +1,207 @@
+---
+title: "Chapter 6 In-Class R Demo: Nonstationarity and ARIMA"
+output: html_document
+---
+
+## Demo Goal
+
+You will see why differencing turns some nonstationary series into stationary series.
+
+Reference: random walk, differencing, ARIMA representation.
+
+```{r setup}
+set.seed(311)
+par(mfrow = c(1, 1))
+```
+
+## 1. Random Walk
+
+The recursion is $X_t = X_{t-1} + \epsilon_t$, starting at zero, so
+$\nabla X_t = X_t - X_{t-1} = \epsilon_t$. Predict which of the two ACF
+plots should look like white noise before running the chunk.
+
+```{r random-walk, fig.height = 7}
+n <- 250
+x <- cumsum(rnorm(n))
+
+par(mfrow = c(2, 2))
+plot.ts(x, main = "Random walk", ylab = "X_t")
+acf(x, main = "ACF of random walk")
+plot.ts(diff(x), main = "First difference", ylab = "Difference")
+acf(diff(x), main = "ACF after differencing")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- Why does the sample ACF of the random walk start near 1 and decay almost
+  linearly?
+- Why does differencing help?
+
+What the commands do:
+
+- `rnorm(n)` generates independent normal increments with variance 1.
+- `cumsum()` adds the increments to form a random walk.
+- `diff(x)` subtracts each observation from the next; its length is `n - 1`.
+- `acf()` here describes the observed sample. A nonstationary random walk
+  has no stationary ACF depending on lag alone.
+
+### Check the Difference Directly
+
+```{r random-walk-check}
+set.seed(311)
+eps <- rnorm(250)
+walk <- cumsum(eps)
+max(abs(as.numeric(diff(walk)) - eps[-1]))
+```
+
+`eps[-1]` omits the first increment because `diff()` has no preceding
+observed value for the first observation. The discrepancy should be close
+to zero, apart from numerical rounding.
+
+## 2. Trend and Over-Differencing
+
+```{r over-differencing, fig.height = 9}
+t <- 1:n
+y <- 0.05 * t + rnorm(n)
+
+par(mfrow = c(3, 2))
+plot.ts(y, main = "Trend plus noise")
+acf(y, main = "ACF of the series")
+plot.ts(diff(y), main = "First difference")
+acf(diff(y), main = "ACF of first difference")
+plot.ts(diff(diff(y)), main = "Second difference")
+acf(diff(diff(y)), main = "ACF of second difference")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- Is second differencing necessary?
+- What visual warning appears when we over-difference? Look at the lag-1
+  autocorrelations and compare with $-1/2$ for $\nabla$ of white noise.
+- Here the noise is iid around a linear trend: what does that say about the
+  first difference, and what would be the alternative to differencing?
+
+What the commands do:
+
+- `0.05 * t` creates a deterministic linear trend, unlike the accumulated
+  random shocks of Part 1.
+- `diff(y)` removes the changing mean, but also differences the noise.
+- `diff(diff(y))` differences an already stationary series in this example.
+
+### Remove the Trend Without Differencing
+
+```{r detrend-comparison, fig.height = 4}
+trend_fit <- lm(y ~ t)
+par(mfrow = c(1, 2))
+acf(residuals(trend_fit), main = "ACF after removing fitted trend")
+acf(diff(y), main = "ACF after first difference")
+par(mfrow = c(1, 1))
+data.frame(
+  series = c("Trend residuals", "First difference", "Second difference"),
+  lag1_acf = round(c(acf(residuals(trend_fit), plot = FALSE)$acf[2],
+                     acf(diff(y), plot = FALSE)$acf[2],
+                     acf(diff(diff(y)), plot = FALSE)$acf[2]), 3)
+)
+```
+
+Questions:
+
+- Why does removing this fitted trend leave approximately independent noise?
+- Why does differencing that noise create negative lag-1 correlation?
+- Would fitting a straight line remove the accumulated shocks of a random walk?
+
+Try it yourself:
+
+- Set the trend slope to zero and rerun Part 2. Does first differencing help?
+
+## 3. Simulate and Fit ARIMA
+
+The model of the notes, $(1 - 0.5B)\nabla X_t = (1 - 0.4B)\epsilon_t$
+($\phi_1 = 0.5$, $\theta_1 = 0.4$), so R is given `ma = -0.4`.
+
+```{r arima-fit}
+x <- arima.sim(model = list(order = c(1, 1, 1), ar = 0.5, ma = -0.4), n = 250)
+plot.ts(x, main = "Simulated ARIMA(1,1,1)")
+acf(diff(x), main = "ACF of differenced series")
+pacf(diff(x), main = "PACF of differenced series")
+
+fit <- arima(x, order = c(1, 1, 1))
+fit                                       # R's ma1 is -theta_hat
+acf(residuals(fit), main = "Residual ACF")
+Box.test(residuals(fit), lag = 12, type = "Ljung-Box", fitdf = 2)
+```
+
+What the commands do:
+
+- `order = c(1, 1, 1)` specifies an ARMA(1,1) for the first differences.
+- `arima()` receives the undifferenced observations and applies `d = 1`
+  internally. Do not also pass `diff(x)` with this same order.
+- `fitdf = 2` counts the fitted AR and MA coefficients; it does not count
+  the differencing order.
+
+Questions:
+
+- Compare `ar1` with $\phi_1 = 0.5$ and `-ma1` with $\theta_1 = 0.4$. Why
+  are the estimates so imprecise? (Hint: $1 - 0.5B$ and $1 - 0.4B$ nearly
+  cancel.)
+- Do the residuals look like white noise?
+
+For contrast, the same model with $\theta_1 = -0.4$ (`ma = 0.4`): the AR and
+MA factors $1 - 0.5B$ and $1 + 0.4B$ are now far apart.
+
+```{r arima-fit-contrast}
+x2 <- arima.sim(model = list(order = c(1, 1, 1), ar = 0.5, ma = 0.4), n = 250)
+fit2 <- arima(x2, order = c(1, 1, 1))
+fit2                                      # R's ma1 is -theta_hat
+round(sqrt(diag(fit$var.coef)), 3)        # s.e., nearly cancelling factors
+round(sqrt(diag(fit2$var.coef)), 3)       # s.e., well-separated factors
+```
+
+- How much smaller are the standard errors when the factors are well
+  separated? Which version is easier to identify from the ACF of `diff(x2)`?
+
+Try it yourself:
+
+- Increase the simulated length to `1000` in both chunks and rerun both fits.
+- Compare the standard errors again. Are larger samples enough to make
+  near cancellation easy to estimate?
+
+## 4. Data: FTSE 100 Log-Returns
+
+The notes difference the logarithm of the FTSE 100 index
+(`EuStockMarkets`, daily, 1991-1998).
+
+```{r ftse}
+ftse <- EuStockMarkets[, "FTSE"]
+r <- diff(log(ftse))                     # log-returns
+
+par(mfrow = c(2, 2))
+plot(ftse, main = "FTSE 100", ylab = "Closing price")
+acf(as.numeric(ftse), main = "ACF of the index (lag in days)")
+plot(r, main = "Differenced log FTSE", ylab = "Log-return")
+acf(as.numeric(r), main = "ACF of log-returns (lag in days)")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- Which $d$ does the ACF of the index suggest?
+- Is the mean of the log-returns constant? Is their variance?
+
+What the commands do:
+
+- `EuStockMarkets[, "FTSE"]` selects the FTSE column of the built-in data.
+- `log()` turns ratios of prices into differences on the log scale.
+- `diff(log(ftse))` gives log-returns, not ordinary percentage returns.
+- `as.numeric()` makes the ACF horizontal axis count observations rather
+  than fractions of a year.
+
+Questions:
+
+- Can an ACF alone establish that the variance is constant?
+- Which periods in the return plot show unusually large fluctuations?
+
+The plots suggest candidate differences; they do not establish stationarity
+by themselves. Check both the mean pattern and the size of the fluctuations.

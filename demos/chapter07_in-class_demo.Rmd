@@ -1,0 +1,267 @@
+---
+title: "Chapter 7 In-Class R Demo: Box–Jenkins Workflow"
+output: html_document
+---
+
+## Demo Goal
+
+You will run the full Box–Jenkins cycle: identify, estimate, diagnose, refine, forecast.
+
+Reference: Box–Jenkins modelling cycle and diagnostic checking.
+
+```{r setup}
+set.seed(311)
+par(mfrow = c(1, 1))
+```
+
+## 1. Generate a Series with Known Structure
+
+As in Chapter 4, first state what the model implies, then compare that
+prediction with the sample. Here we know the generating model, but we will
+still check each stage rather than choose it automatically.
+
+The model is the ARIMA(1,1,1)
+$(1 - 0.6B)(1 - B)X_t = (1 + 0.5B)\epsilon_t$, that is, $\phi = 0.6$ and
+$\theta = -0.5$ in the notes' convention $\theta(B) = 1 - \theta B$. R writes
+the MA part with a plus sign, so the code passes `ma = -theta = 0.5`.
+
+```{r simulate}
+x <- arima.sim(model = list(order = c(1, 1, 1), ar = 0.6, ma = 0.5), n = 300)
+plot.ts(x, main = "Raw series", ylab = "X_t")
+```
+
+What the commands do:
+
+- `order = c(1, 1, 1)` makes the first differences follow an ARMA(1,1).
+- `ar = 0.6` gives persistence in those differences.
+- `ma = 0.5` adds the previous shock with coefficient 0.5, corresponding
+  to $\theta = -0.5$ in the notes.
+
+Questions:
+
+- Does the raw series look stationary?
+- What feature suggests differencing?
+
+## 2. Identification
+
+```{r identify, fig.height = 8}
+dx <- diff(x)
+par(mfrow = c(3, 1))
+plot.ts(dx, main = "Differenced series")
+acf(dx, main = "ACF after differencing")
+pacf(dx, main = "PACF after differencing")
+par(mfrow = c(1, 1))
+```
+
+Augmented Dickey–Fuller test (notes, Section 2.2): $H_0$ is a unit root.
+
+```{r adf, warning = FALSE, message = FALSE}
+tseries::adf.test(x)
+tseries::adf.test(dx)
+```
+
+What the commands do:
+
+- `diff(x)` constructs the candidate stationary series.
+- The ACF and PACF suggest orders for this differenced series, not the raw series.
+- `tseries::adf.test()` runs the ADF test from the `tseries` package.
+  A small p-value is evidence against the unit-root null for that test
+  specification. A large p-value does not prove a unit root, and rejecting
+  a unit root does not establish every condition for stationarity.
+
+If needed, install the package once in the R console with
+`install.packages("tseries")` before running this demo.
+
+Questions:
+
+- Which value of $d$ do the plots and the ADF tests suggest?
+- Does the ACF/PACF suggest AR, MA, or mixed ARMA behaviour?
+
+## 3. ACF/PACF Pattern Reading
+
+Before you estimate a model, practise reading simple patterns.
+
+```{r pattern-reading-table}
+# Values at lags 1-4. Checks: PACF(1) = ACF(1); an MA(1) has |rho_1| <= 1/2.
+patterns <- data.frame(
+  pattern = c("A", "B", "C", "D"),
+  acf_lags_1_to_4 = c(
+    "0.80, 0.64, 0.51, 0.41",
+    "0.44, 0.00, 0.00, 0.00",
+    "0.73, 0.44, 0.26, 0.16",
+    "0.95, 0.90, 0.86, 0.82"
+  ),
+  pacf_lags_1_to_4 = c(
+    "0.80, 0.00, 0.00, 0.00",
+    "0.44, -0.24, 0.14, -0.08",
+    "0.73, -0.21, 0.06, -0.02",
+    "0.95, -0.03, 0.08, -0.02"
+  )
+)
+patterns
+```
+
+Questions:
+
+- Which pattern has ACF tailing and PACF cutting off?
+- Which pattern has ACF cutting off and PACF tailing?
+- Which pattern looks nonstationary?
+- Why should these be treated as candidate models, not final answers?
+
+The table mixes theoretical patterns (A–C) with an illustrative sample
+pattern (D). In particular, a large first autocorrelation and slow decay
+do not distinguish a random walk from every highly persistent stationary
+series. Use the series plot and the differencing checks too.
+
+Check your answers once you have tried. A-C are theoretical values from `ARMAacf()`;
+D is a typical sample ACF/PACF of a random walk.
+
+```{r pattern-reveal}
+patterns$first_candidate <- c("AR(1), phi = 0.8",
+                              "MA(1), theta = -0.6 (R: ma = 0.6)",
+                              "ARMA(1,1), phi = 0.6, theta = -0.3 (R: ma = 0.3)",
+                              "difference first (random walk)")
+patterns[, c("pattern", "first_candidate")]
+round(ARMAacf(ma = 0.6, lag.max = 4, pacf = TRUE), 2)  # check row B
+```
+
+Simulate the common clean patterns.
+
+```{r clean-identification-patterns, fig.height = 7}
+set.seed(7)
+ar1 <- arima.sim(model = list(ar = 0.8), n = 300)
+ma1 <- arima.sim(model = list(ma = 0.8), n = 300)  # theta = -0.8
+
+par(mfrow = c(2, 2))
+acf(ar1, main = "ACF: AR(1)")
+pacf(ar1, main = "PACF: AR(1)")
+acf(ma1, main = "ACF: MA(1)")
+pacf(ma1, main = "PACF: MA(1)")
+par(mfrow = c(1, 1))
+```
+
+Try it yourself:
+
+- Change both sample sizes from `300` to `60`. Are the cut-offs as clear?
+- Repeat with another seed. Does an isolated spike beyond the expected
+  cut-off justify a higher order on its own?
+
+## 4. Estimate Candidate Models
+
+```{r estimate}
+fit_111 <- arima(x, order = c(1, 1, 1))
+fit_011 <- arima(x, order = c(0, 1, 1))
+fit_110 <- arima(x, order = c(1, 1, 0))
+
+fit_111
+AIC(fit_111, fit_011, fit_110)
+BIC(fit_111, fit_011, fit_110)
+```
+
+What the commands do:
+
+- Every fit uses the same raw observations and the same differencing order.
+- The candidates differ only in whether they include AR and MA terms.
+- AIC and BIC trade off fit and complexity. Inspect the residuals of the
+  preferred candidate before forecasting.
+
+Questions:
+
+- Which model would you choose by AIC?
+- Which model would you choose by BIC?
+- R's `ma1` is $-\hat\theta$: what are $\hat\phi$ and $\hat\theta$, and
+  how close are they to the true values $0.6$ and $-0.5$?
+
+## 5. Diagnose Residuals
+
+```{r diagnose}
+res <- residuals(fit_111)
+par(mfrow = c(2, 1))
+plot.ts(res, main = "Residuals")
+acf(res, main = "Residual ACF")
+par(mfrow = c(1, 1))
+Box.test(res, lag = 20, type = "Ljung-Box", fitdf = 2)  # fitdf = p + q
+
+# AR and MA roots: R's MA polynomial is 1 + ma1 z
+Mod(polyroot(c(1, -coef(fit_111)["ar1"])))
+Mod(polyroot(c(1, coef(fit_111)["ma1"])))
+```
+
+Questions:
+
+- Do the residuals behave like white noise?
+- Is the fitted model stationary and invertible?
+
+For this integrated model, stationarity refers to the ARMA model for the
+first differences. The level series still has its differencing root at 1.
+The two root checks above concern the fitted AR and MA factors only.
+
+### Compare a Simpler Candidate's Residuals
+
+```{r diagnose-comparison, fig.height = 4}
+par(mfrow = c(1, 2))
+acf(residuals(fit_110), main = "Residual ACF: ARIMA(1,1,0)")
+acf(residuals(fit_111), main = "Residual ACF: ARIMA(1,1,1)")
+par(mfrow = c(1, 1))
+data.frame(
+  model = c("ARIMA(1,1,0)", "ARIMA(1,1,1)"),
+  ljung_box_p = c(
+    Box.test(residuals(fit_110), lag = 20,
+             type = "Ljung-Box", fitdf = 1)$p.value,
+    Box.test(residuals(fit_111), lag = 20,
+             type = "Ljung-Box", fitdf = 2)$p.value
+  )
+)
+```
+
+Questions:
+
+- Does the extra MA term remove a systematic residual pattern?
+- Why does the degrees-of-freedom adjustment differ between these fits?
+- If a chosen model fails the residual checks, which identification plot
+  would you revisit before changing the order?
+
+## 6. Forecast
+
+```{r forecast}
+pred <- predict(fit_111, n.ahead = 12)
+lower <- pred$pred - 1.96 * pred$se   # approximate 95% prediction interval
+upper <- pred$pred + 1.96 * pred$se
+ts.plot(x, pred$pred, lower, upper, col = c("black", "blue", "red", "red"),
+        lty = c(1, 1, 2, 2), main = "Forecast from ARIMA(1,1,1)", ylab = "X_t")
+legend("topright", legend = c("Observed", "Forecast", "95% interval"),
+       col = c("black", "blue", "red"), lty = c(1, 1, 2), bty = "n")
+```
+
+Questions:
+
+- Why do the intervals keep widening with the horizon?
+
+What the commands do:
+
+- `predict(..., n.ahead = 12)` returns forecasts and their standard errors.
+- The lower and upper limits are approximate 95% prediction limits using
+  normal errors and the fitted parameters. They omit parameter uncertainty.
+- `ts.plot()` puts observations and forecasts on the same time axis.
+
+### Inspect the Last Observations and the Forecasts
+
+```{r forecast-close-up}
+ts.plot(window(x, start = tail(time(x), 40)[1]), pred$pred, lower, upper,
+        col = c("black", "blue", "red", "red"), lty = c(1, 1, 2, 2),
+        main = "Last 40 observations and 12 forecasts", ylab = "X_t")
+data.frame(
+  horizon = 1:12,
+  forecast = round(as.numeric(pred$pred), 3),
+  lower = round(as.numeric(lower), 3),
+  upper = round(as.numeric(upper), 3)
+)
+```
+
+Try it yourself:
+
+- Change the horizon to `24` and rerun the two forecast chunks, changing
+  `horizon = 1:12` to `horizon = 1:24` in the table.
+- Compare the interval widths with those of the stationary AR(2) in Chapter 4.
+- Explain why a fitted mean-reverting difference need not make the level
+  forecasts return to a fixed long-run mean.

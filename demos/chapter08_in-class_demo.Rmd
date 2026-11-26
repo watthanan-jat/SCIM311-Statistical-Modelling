@@ -1,0 +1,219 @@
+---
+title: "Chapter 8 In-Class R Demo: SARIMA"
+output: html_document
+---
+
+## Demo Goal
+
+You will see how seasonal differencing and seasonal ARMA terms help model repeating patterns.
+
+Reference anchor: seasonal ARIMA modelling and seasonal ACF/PACF diagnostics.
+
+```{r setup}
+set.seed(311)
+par(mfrow = c(1, 1))
+```
+
+## 1. Built-In Seasonal Series
+
+Start with the plots. The seasonal swings grow as the passenger counts
+grow, so we compare the original data with their logarithms before
+choosing differences or fitting a model.
+
+```{r airpassengers}
+plot(AirPassengers, main = "AirPassengers", ylab = "Passengers")
+plot(log(AirPassengers), main = "Log AirPassengers", ylab = "log(Passengers)")
+```
+
+Questions:
+
+- Why is the log transform useful before SARIMA modelling?
+
+What the commands do:
+
+- `AirPassengers` is a built-in monthly series with frequency 12.
+- `plot()` uses its stored dates to label the horizontal axis.
+- `log()` reduces the increase in seasonal amplitude as the level grows.
+  It does not by itself remove trend or seasonality.
+
+## 2. Seasonal Differencing
+
+```{r seasonal-diff, fig.height = 8}
+x <- log(AirPassengers)
+dx <- diff(x)
+sdx <- diff(dx, lag = 12)
+
+par(mfrow = c(3, 1))
+plot.ts(x, main = "Log series")
+plot.ts(dx, main = "First difference")
+plot.ts(sdx, main = "First + seasonal difference")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- Which transformation removes trend?
+- Which transformation removes annual seasonality?
+
+What the commands do:
+
+- `diff(x)` forms $\nabla x_t = x_t - x_{t-1}$.
+- `diff(dx, lag = 12)` then forms
+  $\nabla_{12}\nabla x_t = (x_t - x_{t-1}) - (x_{t-12} - x_{t-13})$.
+- The two operations remove 13 initial observations altogether.
+
+### Compare the Seasonal Lag Before and After Differencing
+
+```{r differencing-acf-comparison, fig.height = 4, fig.width = 10}
+par(mfrow = c(1, 3))
+acf(as.numeric(x), lag.max = 36, main = "Log series")
+acf(as.numeric(dx), lag.max = 36, main = "First difference")
+acf(as.numeric(sdx), lag.max = 36, main = "First + seasonal difference")
+par(mfrow = c(1, 1))
+c(log_series = length(x), first_difference = length(dx),
+  both_differences = length(sdx))
+```
+
+Questions:
+
+- After first differencing, is there still a pattern at lags 12, 24 and 36?
+- After both differences, must every sample autocorrelation be zero?
+- How is remaining short-lag dependence different from a slow seasonal decay?
+
+## 3. Seasonal ACF/PACF
+
+`as.numeric()` makes R count the lags in months rather than years.
+
+```{r seasonal-acf}
+par(mfrow = c(1, 2))
+acf(as.numeric(sdx), lag.max = 48, main = "ACF after differencing")
+pacf(as.numeric(sdx), lag.max = 48, main = "PACF after differencing")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- What happens at lag 12?
+- Does the seasonal pattern look AR-like or MA-like?
+
+The horizontal axis now counts months. The seasonal lags are 12, 24, 36
+and 48; lag 1 is one month, not one year. Use these plots to propose a
+model, then check its fitted residuals.
+
+Try it yourself:
+
+- Replace `sdx` by `dx` in the two diagnostic plots. Which seasonal pattern
+  is stronger before seasonal differencing?
+
+## 4. Fit a Simple SARIMA Model
+
+```{r fit-sarima}
+fit <- arima(
+  x,
+  order = c(0, 1, 1),
+  seasonal = list(order = c(0, 1, 1), period = 12)
+)
+fit
+acf(as.numeric(residuals(fit)), lag.max = 48, main = "Residual ACF")
+# fitdf = p + q + P + Q = 2
+Box.test(residuals(fit), lag = 24, type = "Ljung-Box", fitdf = 2)
+```
+
+What the commands do:
+
+- `order = c(0, 1, 1)` sets $(p,d,q)$ for the nonseasonal part.
+- `seasonal = list(order = c(0, 1, 1), period = 12)` sets $(P,D,Q)$
+  and the seasonal period. R applies both differences to `x` internally.
+- Fit the log series `x`, not the already differenced `sdx`, with these orders.
+- `fitdf = 2` counts one nonseasonal and one seasonal MA coefficient.
+
+### Read the Multiplicative Model
+
+Multiplying the two MA factors gives
+
+$$
+(1 - \theta B)(1 - \Theta B^{12})
+= 1 - \theta B - \Theta B^{12} + \theta\Theta B^{13}.
+$$
+
+The lag-13 term is determined by the two fitted MA coefficients; it is
+not a third free coefficient.
+
+```{r seasonal-ma-coefficients}
+theta_hat <- -unname(coef(fit)["ma1"])
+Theta_hat <- -unname(coef(fit)["sma1"])
+data.frame(
+  lag = c(1, 12, 13),
+  shock_coefficient = c(-theta_hat, -Theta_hat, theta_hat * Theta_hat)
+)
+```
+
+Questions:
+
+- How does the product term help explain an ACF feature near lag 13?
+- Why are we fitting two MA coefficients rather than three unrelated ones?
+
+Questions:
+
+- R's `ma1` and `sma1` are $-\hat\theta$ and $-\hat\Theta$ for the model
+  $\nabla\nabla_{12}\log X_t = (1 - \theta B)(1 - \Theta B^{12})\epsilon_t$.
+  What are $\hat\theta$ and $\hat\Theta$?
+- Do the residuals behave like white noise?
+
+## 5. Forecast on the Original Scale
+
+```{r forecast-sarima}
+pred <- predict(fit, n.ahead = 24)
+future_log <- pred$pred
+future <- exp(future_log)       # conditional median (notes, Section 5.1)
+lower <- exp(future_log - 1.96 * pred$se)   # 95% prediction limits
+upper <- exp(future_log + 1.96 * pred$se)
+
+ts.plot(AirPassengers, future, lower, upper,
+        col = c("black", "red", "red", "red"), lty = c(1, 1, 2, 2),
+        main = "SARIMA forecast on original scale",
+        ylab = "Passengers")
+legend("topleft", legend = c("Observed", "Forecast", "95% interval"),
+       col = c("black", "red", "red"), lty = c(1, 1, 2), bty = "n")
+```
+
+Questions:
+
+- Why is `exp(pred$pred)` the median, not the mean, of the forecast
+  distribution?
+- Why are the prediction limits not symmetric about the forecast?
+
+What the commands do:
+
+- `predict()` works on the fitted log scale.
+- `exp()` transforms each forecast and each endpoint back to passenger counts.
+- With a normal forecast distribution on the log scale, the exponentiated
+  log forecast is the median. Exponentiating the endpoints preserves their
+  approximate coverage, but makes the interval asymmetric.
+
+### Compare the Median with the Mean
+
+Under that normal assumption, the corresponding mean uses the variance
+adjustment described in the notes:
+
+```{r forecast-mean-median}
+future_mean <- exp(future_log + 0.5 * pred$se^2)
+data.frame(
+  horizon = 1:6,
+  median = round(as.numeric(future)[1:6], 1),
+  mean = round(as.numeric(future_mean)[1:6], 1),
+  lower = round(as.numeric(lower)[1:6], 1),
+  upper = round(as.numeric(upper)[1:6], 1)
+)
+```
+
+Questions:
+
+- Why is the mean larger than the median here?
+- What happens to the difference as the forecast variance grows?
+
+Try it yourself:
+
+- Change the forecast horizon to `36`. Do the seasonal peaks continue?
+- Compare interval widths on the log scale and the passenger scale.
+- Explain why a plausible seasonal forecast still needs residual checks.

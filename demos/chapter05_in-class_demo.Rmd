@@ -1,0 +1,202 @@
+---
+title: "Chapter 5 In-Class R Demo: ARMA Models"
+output: html_document
+---
+
+## Demo Goal
+
+You will see how AR persistence and the short memory of the MA part combine in an ARMA model.
+
+Reference anchor: ARMA structure, ACF/PACF tailing, residual checking.
+
+```{r setup}
+set.seed(311)
+par(mfrow = c(1, 1))
+```
+
+## 1. Compare AR, MA, and ARMA
+
+As in the notes, the MA part is written with minus signs,
+$\theta(B) = 1 - \theta B$, and R is given `ma = -theta`.
+
+Before running the chunk, predict which ACF or PACF should cut off, using
+the identification table from Chapter 4.
+
+```{r compare-arma, fig.width = 10, fig.height = 9}
+n <- 250
+# X_t = 0.7 X_{t-1} + eps_t
+x_ar <- arima.sim(model = list(ar = 0.7), n = n)
+# X_t = eps_t - 0.7 eps_{t-1}        (theta = 0.7)
+x_ma <- arima.sim(model = list(ma = -0.7), n = n)
+# X_t = 0.7 X_{t-1} + eps_t + 0.5 eps_{t-1}   (phi = 0.7, theta = -0.5)
+x_arma <- arima.sim(model = list(ar = 0.7, ma = 0.5), n = n)
+
+par(mfrow = c(3, 3))
+plot.ts(x_ar, main = "AR(1)", ylab = "X_t")
+acf(x_ar, main = "ACF")
+pacf(x_ar, main = "PACF")
+plot.ts(x_ma, main = "MA(1)", ylab = "X_t")
+acf(x_ma, main = "ACF")
+pacf(x_ma, main = "PACF")
+plot.ts(x_arma, main = "ARMA(1,1)", ylab = "X_t")
+acf(x_arma, main = "ACF")
+pacf(x_arma, main = "PACF")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- Which model has gradual memory?
+- Which model has the shortest memory?
+- Why can ARMA be harder to identify?
+
+What the commands do:
+
+- `arima.sim()` generates a stationary series from the coefficients in `model`.
+- `ma = 0.5` means that R adds $0.5\epsilon_{t-1}$; in the notes this is
+  $\theta = -0.5$.
+- `par(mfrow = c(3, 3))` puts one model on each row: series, ACF, then PACF.
+- Resetting `par()` to `c(1, 1)` makes the next plot use the whole figure.
+
+### Theory Versus Sample
+
+The sample ACF is an estimate. Compare it with the theoretical ACF of the
+same ARMA(1,1), keeping the MA sign convention unchanged.
+
+```{r arma-theory-sample}
+data.frame(
+  lag = 0:6,
+  theory = round(ARMAacf(ar = 0.7, ma = 0.5, lag.max = 6), 3),
+  sample = round(as.numeric(acf(x_arma, lag.max = 6, plot = FALSE)$acf), 3)
+)
+```
+
+What the commands do:
+
+- `ARMAacf()` calculates population correlations from the model coefficients.
+- `plot = FALSE` returns the sample correlations without drawing another plot.
+- `$acf` extracts those values; the ACF includes lag 0.
+
+Try it yourself:
+
+- Change `n` to `1000` and rerun from the comparison chunk. Do the sample
+  correlations generally move closer to the theoretical ones?
+- Set `ma = 0` for `x_arma`. Which simpler model remains?
+
+## 2. Fit Competing Models
+
+The three candidates use the same observations. We compare their fit while
+penalising the number of estimated parameters: smaller AIC or BIC is preferred.
+
+```{r model-comparison}
+fit_ar <- arima(x_arma, order = c(1, 0, 0))
+fit_ma <- arima(x_arma, order = c(0, 0, 1))
+fit_arma <- arima(x_arma, order = c(1, 0, 1))
+
+AIC(fit_ar, fit_ma, fit_arma)
+BIC(fit_ar, fit_ma, fit_arma)
+fit_arma    # R's ma1 is -theta_hat
+```
+
+What the commands do:
+
+- `order = c(p, d, q)` sets the AR order, number of differences and MA order.
+- `arima()` estimates the coefficients rather than using the simulation values.
+- For this stationary model, R's `intercept` is the series mean, not the
+  constant in the uncentred ARMA equation.
+- `AIC()` and `BIC()` compare the candidates; neither guarantees recovery of
+  the true model from a finite sample.
+
+Questions:
+
+- Does the information criterion identify the data-generating model?
+- Compare `ar1` with $\phi = 0.7$ and `-ma1` (that is $\hat\theta$) with
+  $\theta = -0.5$. Are the true values inside estimate $\pm 1.96$ s.e.?
+- Change the simulation to `ma = -0.5` ($\theta = 0.5$), so that the factors
+  $1 - 0.7B$ and $1 - 0.5B$ are close, and refit. What happens to the
+  standard errors and to the AIC ranking? (Part 4 explains why.)
+- What happens if the sample size is small?
+
+## 3. Residual Diagnostics
+
+If the model has described the serial correlation, little should remain
+in the residual ACF. Check the plot as well as the test.
+
+```{r residual-check}
+res <- residuals(fit_arma)
+plot.ts(res, main = "ARMA residuals", ylab = "Residual")
+acf(res, main = "Residual ACF")
+Box.test(res, lag = 12, type = "Ljung-Box", fitdf = 2)  # fitdf = p + q
+```
+
+What the commands do:
+
+- `residuals()` extracts the fitted model's one-step prediction errors.
+- `Box.test()` checks residual autocorrelations jointly through lag 12.
+- `fitdf = 2` adjusts for the fitted AR and MA coefficients, giving
+  $12 - 2 = 10$ test degrees of freedom. A large p-value means insufficient
+  evidence of remaining autocorrelation; it does not prove white noise.
+
+Try it yourself:
+
+- Apply the same plots and test to `fit_ar`, using `fitdf = 1`.
+- Does the simpler model leave a pattern that the ARMA model removes?
+
+Questions:
+
+- Do the residuals look like white noise?
+- Why is `fitdf = 2`?
+
+## 4. Parameter Redundancy
+
+Fit an ARMA(1,1) to Gaussian iid white noise and compare the roots of the fitted AR
+polynomial $\hat\phi(z) = 1 - \hat\phi z$ and MA polynomial
+$\hat\theta(z) = 1 - \hat\theta z$.
+
+```{r redundancy}
+set.seed(5)
+w <- ts(rnorm(200))
+fit_w <- arima(w, order = c(1, 0, 1))
+fit_w
+theta_hat <- -coef(fit_w)["ma1"]          # R's ma1 is -theta_hat
+c(AR_root = 1 / unname(coef(fit_w)["ar1"]),
+  MA_root = 1 / unname(theta_hat))
+fit_wn <- arima(w, order = c(0, 0, 0))    # white noise with a mean
+AIC(fit_w, fit_wn)
+```
+
+Questions:
+
+- Are the two roots nearly equal? What model remains after cancelling them?
+- Which model does AIC prefer?
+
+### Exact Cancellation Before Estimation
+
+If $\phi = \theta$, the model equation is
+
+$$
+(1 - \phi B)X_t = (1 - \phi B)\epsilon_t.
+$$
+
+For the stationary solution with $|\phi| < 1$, cancelling the common factor
+leaves white noise. Thus a fitted ARMA model can contain two unnecessary
+coefficients. Compare exact cancellation with nearby factors.
+
+```{r cancellation-acf, fig.height = 4}
+par(mfrow = c(1, 2))
+plot(0:12, ARMAacf(ar = 0.7, ma = -0.7, lag.max = 12),
+     type = "h", ylim = c(-0.2, 1), xlab = "Lag", ylab = "ACF",
+     main = "Exact cancellation: theta = 0.7")
+abline(h = 0, col = "grey")
+plot(0:12, ARMAacf(ar = 0.7, ma = -0.5, lag.max = 12),
+     type = "h", ylim = c(-0.2, 1), xlab = "Lag", ylab = "ACF",
+     main = "Nearby factors: theta = 0.5")
+abline(h = 0, col = "grey")
+par(mfrow = c(1, 1))
+```
+
+Questions:
+
+- Why are all non-zero-lag correlations zero in the first plot?
+- Why can nearby factors make the coefficients hard to estimate separately?
+- How does this explain the fitting experiment in Part 2?
